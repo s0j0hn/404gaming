@@ -8,30 +8,30 @@ var validator = require('validator'),
  * Render the main application page
  */
 exports.renderIndex = function (req, res) {
-    var safeUserObject = null;
-    if (req.user) {
-        safeUserObject = {
-            displayName: validator.escape(req.user.displayName),
-            provider: validator.escape(req.user.provider),
-            username: validator.escape(req.user.username),
-            created: req.user.created.toString(),
-            roles: req.user.roles,
-            rank : req.user.rank,
-            posts : req.user.posts,
-            warnings: req.user.warnings,
-            ip_address: req.user.ip_address,
-            replys: req.user.replys,
-            views: req.user.views,
-            profileImageURL: req.user.profileImageURL,
-            email: validator.escape(req.user.email),
-            lastName: validator.escape(req.user.lastName),
-            firstName: validator.escape(req.user.firstName),
-            additionalProvidersData: req.user.additionalProvidersData
-        };
-    }
+    // var safeUserObject = null;
+    // if (req.user) {
+    //     safeUserObject = {
+    //         displayName: validator.escape(req.user.displayName),
+    //         provider: validator.escape(req.user.provider),
+    //         username: validator.escape(req.user.username),
+    //         created: req.user.created.toString(),
+    //         roles: req.user.roles,
+    //         rank : req.user.rank,
+    //         posts : req.user.posts,
+    //         warnings: req.user.warnings,
+    //         ip_address: req.user.ip_address,
+    //         replys: req.user.replys,
+    //         views: req.user.views,
+    //         profileImageURL: req.user.profileImageURL,
+    //         email: validator.escape(req.user.email),
+    //         lastName: validator.escape(req.user.lastName),
+    //         firstName: validator.escape(req.user.firstName),
+    //         additionalProvidersData: req.user.additionalProvidersData
+    //     };
+    // }
 
     res.render('modules/core/server/views/index', {
-        user: JSON.stringify(safeUserObject),
+        user: req.user || null,
         sharedConfig: JSON.stringify(config.shared)
     });
 

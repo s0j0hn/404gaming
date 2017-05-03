@@ -60,7 +60,7 @@ module.exports = {
             maxLength: 128,
             minLength: 7,
             minPhraseLength: 20,
-            minOptionalTestsToPass: 4
+            minOptionalTestsToPass: 3
         }
     }
 };

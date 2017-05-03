@@ -102,24 +102,24 @@ exports.signup = function (req, res) {
         }
     });
 };
-/**
- * Signin-token after passport token authentication
- */
-exports.tokenAuth = function (req, res, next) {
-    passport.authenticate('local-token',{ session: false, scope: [] }, function(err, user, info) {
-        if (err || !user) {
-            res.status(400).send(info);
-        } else {
-            // Remove sensitive data before returning
-            user.password = undefined;
-            user.salt = undefined;
-
-            // return the user object (contains loginToken)
-            res.json(user);
-
-        }
-    })(req, res, next);
-};
+// /**
+//  * Signin-token after passport token authentication
+//  */
+// exports.tokenAuth = function (req, res, next) {
+//     passport.authenticate('local-token',{ session: false, scope: [] }, function(err, user, info) {
+//         if (err || !user) {
+//             res.status(400).send(info);
+//         } else {
+//             // Remove sensitive data before returning
+//             user.password = undefined;
+//             user.salt = undefined;
+//
+//             // return the user object (contains loginToken)
+//             res.json(user);
+//
+//         }
+//     })(req, res, next);
+// };
 
 
 

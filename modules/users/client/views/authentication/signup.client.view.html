@@ -48,14 +48,14 @@
           <uib-progressbar value="requirementsProgress" type="{{requirementsColor}}"><span style="color:white; white-space:nowrap;">{{requirementsProgress}}%</span></uib-progressbar>
         </div>
         <div class="text-center form-group">
-          <div class="form-group"
-               vc-recaptcha
-               ng-model="vm.credentials.recaptchaResponse"
-               on-create="vm.setWidgetId(widgetId)"
-               on-success="vm.setResponse(response)"
-               on-expire="vm.cbExpiration()">
+          <!--<div class="form-group"-->
+               <!--vc-recaptcha-->
+               <!--ng-model="vm.credentials.recaptchaResponse"-->
+               <!--on-create="vm.setWidgetId(widgetId)"-->
+               <!--on-success="vm.setResponse(response)"-->
+               <!--on-expire="vm.cbExpiration()">-->
 
-          </div>
+          <!--</div>-->
           <button type="submit" class="btn btn-primary">Sign up</button>
           &nbsp; or&nbsp;
           <a ui-sref="page.authentication.signin" class="show-signup">Sign in</a>

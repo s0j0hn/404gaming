@@ -41,10 +41,15 @@
 
 	{% block content %}{% endblock %}
 
+  <!--&lt;!&ndash;Embedding The User Object&ndash;&gt;-->
+  <!--<script type="text/javascript">-->
+    <!--var user = {{ user }};-->
+    <!--var env = "{{ env }}";-->
+  <!--</script>-->
+
   <!--Embedding The User Object-->
   <script type="text/javascript">
-    var user = {{ user }};
-    var env = "{{ env }}";
+    var user = {{ user | json | safe }};
   </script>
 
   <!--Load The Socket.io File-->

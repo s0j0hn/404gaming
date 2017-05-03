@@ -31,7 +31,15 @@ var ChannelSchema = new Schema({
     users: [{
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }]
+    }],
+    moderators: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+    owner:{
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 
 });
 
