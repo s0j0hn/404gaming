@@ -47,7 +47,7 @@ exports.isAllowed = function (req, res, next) {
     } else if (req.params.token) {
         token = req.params.token;
         var decodedUser = jwt.decode(token, 'Test123456');
-        if (decodedUser._id){
+        if (decodedUser._id) {
             req.user = decodedUser;
             roles = req.user.roles;
         }
@@ -65,15 +65,13 @@ exports.isAllowed = function (req, res, next) {
         if (err) {
             // An authorization error occurred
             return res.status(500).send('Unexpected authorization error');
-        } else {
-            if (isAllowed) {
+        } else if (isAllowed) {
                 // Access granted! Invoke next middleware
-                return next();
-            } else {
-                return res.status(403).json({
-                    message: 'User is not authorized'
-                });
-            }
+            return next();
+        } else {
+            return res.status(403).json({
+                message: 'User is not authorized'
+            });
         }
     });
 

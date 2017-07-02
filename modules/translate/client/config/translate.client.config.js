@@ -6,17 +6,17 @@
         .config(translateConfig)
         ;
     translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider){
+    function translateConfig($translateProvider) {
 
-      $translateProvider.useStaticFilesLoader({
-          prefix : '/i18n/',
-          suffix : '.json'
-      });
+        $translateProvider.useStaticFilesLoader({
+            prefix: '/i18n/',
+            suffix: '.json'
+        });
 
-      $translateProvider.preferredLanguage('fr');
-      $translateProvider.useLocalStorage();
-      $translateProvider.usePostCompiling(true);
-      $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+        $translateProvider.preferredLanguage('fr');
+        $translateProvider.useLocalStorage();
+        $translateProvider.usePostCompiling(true);
+        $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
 
     }
-})();
+}());

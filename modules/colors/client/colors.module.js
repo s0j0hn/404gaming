@@ -3,4 +3,4 @@
 
     ApplicationConfiguration.registerModule('app.colors');
 
-})();
+}());

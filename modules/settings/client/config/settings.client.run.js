@@ -7,49 +7,49 @@
 
     settingsRun.$inject = ['$rootScope', '$localStorage'];
 
-    function settingsRun($rootScope, $localStorage){
+    function settingsRun($rootScope, $localStorage) {
 
 
       // User Settings
       // -----------------------------------
-      $rootScope.user = {
-        name:     'John',
-        job:      'ng-developer',
-        picture:  'img/user/02.jpg'
-      };
+        $rootScope.user = {
+            name: 'John',
+            job: 'ng-developer',
+            picture: 'img/user/02.jpg'
+        };
 
       // Hides/show user avatar on sidebar from any element
-      $rootScope.toggleUserBlock = function(){
-        $rootScope.$broadcast('toggleUserBlock');
-      };
+        $rootScope.toggleUserBlock = function() {
+            $rootScope.$broadcast('toggleUserBlock');
+        };
 
       // Global Settings
       // -----------------------------------
-      $rootScope.app = {
-        name: '404gaming',
-        description: '404gaming portal',
-        year: ((new Date()).getFullYear()),
-        layout: {
-          isFixed: true,
-          isCollapsed: false,
-          isBoxed: false,
-          isRTL: false,
-          horizontal: false,
-          isFloat: false,
-          asideHover: false,
-          theme: 'themes/theme-a.css',
-          asideScrollbar: false,
-          isCollapsedText: false
-        },
-        useFullLayout: false,
-        hiddenFooter: false,
-        offsidebarOpen: false,
-        asideToggled: false,
-        viewAnimation: 'ng-fadeInUp'
-      };
+        $rootScope.app = {
+            name: '404gaming',
+            description: '404gaming portal',
+            year: ((new Date()).getFullYear()),
+            layout: {
+                isFixed: true,
+                isCollapsed: false,
+                isBoxed: false,
+                isRTL: false,
+                horizontal: false,
+                isFloat: false,
+                asideHover: false,
+                theme: 'themes/theme-a.css',
+                asideScrollbar: false,
+                isCollapsedText: false
+            },
+            useFullLayout: false,
+            hiddenFooter: false,
+            offsidebarOpen: false,
+            asideToggled: false,
+            viewAnimation: 'ng-fadeInUp'
+        };
 
       // Setup the layout mode
-      //$rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
+      // $rootScope.app.layout.horizontal = ( $rootScope.$stateParams.layout === 'app-h') ;
 
       // Restore layout settings [*** UNCOMMENT TO ENABLE ***]
       // if( angular.isDefined($localStorage.layout) )
@@ -62,11 +62,11 @@
       // }, true);
 
       // Close submenu when sidebar change from collapsed to normal
-      $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
-        if( newValue === false )
-          $rootScope.$broadcast('closeSidebarMenu');
-      });
+        $rootScope.$watch('app.layout.isCollapsed', function(newValue) {
+            if (newValue === false)
+                $rootScope.$broadcast('closeSidebarMenu');
+        });
 
     }
 
-})();
+}());

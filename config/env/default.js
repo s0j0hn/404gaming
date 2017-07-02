@@ -8,11 +8,11 @@ module.exports = {
         googleAnalyticsTrackingID: process.env.GOOGLE_ANALYTICS_TRACKING_ID || 'UA-96461510-1',
         googleRecaptchaPublic: process.env.GOOGLE_RECAPTCHA_PUBLIC || '6LdogRsUAAAAAOZgwgIXB7QTPdjRNgkrOXP2WH0c',
         googleRecaptchaSecret: process.env.GOOGLE_RECAPTCHA_SECRET || '6LdogRsUAAAAAE2YsMw0h65M0lXvytTgubAiLe1F',
-        httpsPin:{
+        httpsPin: {
             pin1: 'HNkuDDSYoxibVJ0bTCulHKegeK0TqoR8D7S9AmJ/a7M=',
             pin2: 'HNkuDDSYoxibVJ0bTCulHKegeK0TqoR8D7S9AmJ/a7M='
         },
-        mongoEncryption:{
+        mongoEncryption: {
             activated: false,
             // It can be defined only ONCE !!
             // Or you have to decrypt all the data before you change this
@@ -42,7 +42,7 @@ module.exports = {
     logo: 'public/img/brand/logo.png',
     favicon: 'public/img/brand/favicon.ico',
     illegalUsernames: ['meanjs', 'administrator', 'password', 'admin', 'user',
-        'unknown', 'anonymous', 'null', 'undefined', 'api','404team','support','404'
+        'unknown', 'anonymous', 'null', 'undefined', 'api', '404team', 'support', '404'
     ],
     uploads: {
         profile: {

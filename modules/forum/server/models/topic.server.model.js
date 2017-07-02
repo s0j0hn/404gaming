@@ -38,7 +38,7 @@ var TopicSchema = new Schema({
         type: Number,
         default: 0
     },
-    blocked:{
+    blocked: {
         type: Boolean,
         default: false,
         required: 'Please fill specify topic is blocked ?'
@@ -47,7 +47,7 @@ var TopicSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    updated:{
+    updated: {
         type: Date
     },
     section: {

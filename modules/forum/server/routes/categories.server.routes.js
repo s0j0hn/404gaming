@@ -8,15 +8,15 @@ var categoriesPolicy = require('../policies/categories.server.policy'),
 
 module.exports = function(app) {
   // Categories Routes
-  app.route('/api/categories').all(categoriesPolicy.isAllowed)
+    app.route('/api/categories').all(categoriesPolicy.isAllowed)
       .get(categories.list)
       .post(categories.create);
 
-  app.route('/api/categories/:categorieId').all(categoriesPolicy.isAllowed)
+    app.route('/api/categories/:categorieId').all(categoriesPolicy.isAllowed)
       .get(categories.read)
       .put(categories.update)
       .delete(categories.delete);
 
   // Finish by binding the Categorie middleware
-  app.param('categorieId', categories.categorieByID);
+    app.param('categorieId', categories.categorieByID);
 };

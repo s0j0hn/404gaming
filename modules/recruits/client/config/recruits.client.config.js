@@ -9,7 +9,7 @@ angular.module('app.recruits').run(['Menus',
             state: 'app.recruits.create',
             iconClass: 'fa  fa-pencil-square-o',
             type: 'item',
-            roles: ['user','team','admin']
+            roles: ['user', 'team', 'admin']
         });
 
 

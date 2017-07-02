@@ -40,13 +40,13 @@ exports.read = function (req, res) {
 exports.update = function (req, res) {
     var channel = req.channel;
 
-    if (req.user && req.user._id === channel.owner){
+    if (req.user && req.user._id === channel.owner) {
         channel.name = req.body.name;
         channel.description = req.body.description;
         channel.users = req.body.users;
         channel.moderators = req.body.moderators;
 
-    } else if (req.user && channel.moderators.indexOf(req.user._id)){
+    } else if (req.user && channel.moderators.indexOf(req.user._id)) {
         channel.users = req.body.users;
     } else {
         return res.status(400).send({
@@ -104,7 +104,7 @@ exports.quitChannel = function (req, res) {
  */
 exports.delete = function (req, res) {
     var channel = req.channel;
-    if (req.user && channel.owner === req.user._id){
+    if (req.user && channel.owner === req.user._id) {
         channel.remove(function (err) {
             if (err) {
                 return res.status(400).send({
@@ -125,14 +125,14 @@ exports.list = function (req, res) {
         .populate('moderators', 'username')
         .populate('owner', 'username')
         .populate('users', 'username').exec(function (err, channels) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.json(channels);
-        }
-    });
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(channels);
+            }
+        });
 };
 
 /**
@@ -150,14 +150,14 @@ exports.channelByID = function (req, res, next, id) {
         .populate('moderators', 'username')
         .populate('users', 'username')
         .populate('owner', 'username').exec(function (err, channel) {
-        if (err) {
-            return next(err);
-        } else if (!channel) {
-            return res.status(404).send({
-                message: 'No channel with that identifier has been found'
-            });
-        }
-        req.channel = channel;
-        next();
-    });
+            if (err) {
+                return next(err);
+            } else if (!channel) {
+                return res.status(404).send({
+                    message: 'No channel with that identifier has been found'
+                });
+            }
+            req.channel = channel;
+            next();
+        });
 };

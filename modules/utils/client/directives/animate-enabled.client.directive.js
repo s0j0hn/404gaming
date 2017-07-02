@@ -1,4 +1,4 @@
-/**=========================================================
+/** =========================================================
  * Module: animate-enabled.js
  * Enable or disables ngAnimate for element with directive
  =========================================================*/
@@ -19,12 +19,12 @@
         return directive;
 
         function link(scope, element, attrs) {
-          scope.$watch(function () {
-            return scope.$eval(attrs.animateEnabled, scope);
-          }, function (newValue) {
-            $animate.enabled(!!newValue, element);
-          });
+            scope.$watch(function () {
+                return scope.$eval(attrs.animateEnabled, scope);
+            }, function (newValue) {
+                $animate.enabled(!!newValue, element);
+            });
         }
     }
 
-})();
+}());

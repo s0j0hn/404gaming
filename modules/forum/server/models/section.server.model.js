@@ -16,7 +16,7 @@ var SectionSchema = new Schema({
         required: 'Please fill Section name',
         trim: true
     },
-    position:{
+    position: {
         type: Number,
         min: 1,
         max: 65,
@@ -24,7 +24,7 @@ var SectionSchema = new Schema({
     },
     visibility: {
         type: String,
-        enum:['admin','team','user'],
+        enum: ['admin', 'team', 'user'],
         default: 'user'
     },
     latestPost: {

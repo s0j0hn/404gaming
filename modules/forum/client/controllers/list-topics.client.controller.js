@@ -18,12 +18,12 @@
         vm.template = tpl.path;
         vm.sections = SectionsService.query();
 
-        TopicsService.query({'sectionId': vm.sectionId}, function (data) {
+        TopicsService.query({ 'sectionId': vm.sectionId }, function (data) {
             vm.topics = data;
             vm.buildPager();
         });
 
-        /*vm.unblockTopic = function (topic) {
+        /* vm.unblockTopic = function (topic) {
             if (topic._id) {
                 topic.blocked = false;
                 topic.$update(successCallback, errorCallback);
@@ -59,7 +59,7 @@
         vm.openMoveDialog = function (topic) {
             ngDialog.open({ template: vm.template,
                 className: 'ngdialog-theme-default',
-                controller: function(){
+                controller: function() {
                     var vm = this;
                     vm.topic = topic;
                     vm.sectionId = topic.section._id;
@@ -99,7 +99,6 @@
                 }
             }
         };
-
 
 
         function buildPager() {

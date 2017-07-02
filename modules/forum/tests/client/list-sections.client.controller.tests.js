@@ -1,91 +1,91 @@
 (function () {
-  'use strict';
+    'use strict';
 
-  describe('Sections List Controller Tests', function () {
+    describe('Sections List Controller Tests', function () {
     // Initialize global variables
-    var SectionsListController,
-      $scope,
-      $httpBackend,
-      $state,
-      Authentication,
-      SectionsService,
-      mockSection;
+        var SectionsListController,
+            $scope,
+            $httpBackend,
+            $state,
+            Authentication,
+            SectionsService,
+            mockSection;
 
     // The $resource service augments the response object with methods for updating and deleting the resource.
     // If we were to use the standard toEqual matcher, our tests would fail because the test values would not match
     // the responses exactly. To solve the problem, we define a new toEqualData Jasmine matcher.
     // When the toEqualData matcher compares two objects, it takes only object properties into
     // account and ignores methods.
-    beforeEach(function () {
-      jasmine.addMatchers({
-        toEqualData: function (util, customEqualityTesters) {
-          return {
-            compare: function (actual, expected) {
-              return {
-                pass: angular.equals(actual, expected)
-              };
-            }
-          };
-        }
-      });
-    });
+        beforeEach(function () {
+            jasmine.addMatchers({
+                toEqualData: function (util, customEqualityTesters) {
+                    return {
+                        compare: function (actual, expected) {
+                            return {
+                                pass: angular.equals(actual, expected)
+                            };
+                        }
+                    };
+                }
+            });
+        });
 
     // Then we can start by loading the main application module
-    beforeEach(module(ApplicationConfiguration.applicationModuleName));
+        beforeEach(module(ApplicationConfiguration.applicationModuleName));
 
     // The injector ignores leading and trailing underscores here (i.e. _$httpBackend_).
     // This allows us to inject a service but then attach it to a variable
     // with the same name as the service.
-    beforeEach(inject(function ($controller, $rootScope, _$state_, _$httpBackend_, _Authentication_, _SectionsService_) {
+        beforeEach(inject(function ($controller, $rootScope, _$state_, _$httpBackend_, _Authentication_, _SectionsService_) {
       // Set a new global scope
-      $scope = $rootScope.$new();
+            $scope = $rootScope.$new();
 
       // Point global variables to injected services
-      $httpBackend = _$httpBackend_;
-      $state = _$state_;
-      Authentication = _Authentication_;
-      SectionsService = _SectionsService_;
+            $httpBackend = _$httpBackend_;
+            $state = _$state_;
+            Authentication = _Authentication_;
+            SectionsService = _SectionsService_;
 
       // create mock article
-      mockSection = new SectionsService({
-        _id: '525a8422f6d0f87f0e407a33',
-        name: 'Section Name'
-      });
+            mockSection = new SectionsService({
+                _id: '525a8422f6d0f87f0e407a33',
+                name: 'Section Name'
+            });
 
       // Mock logged in user
-      Authentication.user = {
-        roles: ['user']
-      };
+            Authentication.user = {
+                roles: ['user']
+            };
 
       // Initialize the Sections List controller.
-      SectionsListController = $controller('SectionsListController as vm', {
-        $scope: $scope
-      });
+            SectionsListController = $controller('SectionsListController as vm', {
+                $scope: $scope
+            });
 
       // Spy on state go
-      spyOn($state, 'go');
-    }));
+            spyOn($state, 'go');
+        }));
 
-    describe('Instantiate', function () {
-      var mockSectionList;
+        describe('Instantiate', function () {
+            var mockSectionList;
 
-      beforeEach(function () {
-        mockSectionList = [mockSection, mockSection];
-      });
+            beforeEach(function () {
+                mockSectionList = [mockSection, mockSection];
+            });
 
-      it('should send a GET request and return all Sections', inject(function (SectionsService) {
+            it('should send a GET request and return all Sections', inject(function (SectionsService) {
         // Set POST response
-        $httpBackend.expectGET('api/sections').respond(mockSectionList);
+                $httpBackend.expectGET('api/sections').respond(mockSectionList);
 
 
-        $httpBackend.flush();
+                $httpBackend.flush();
 
         // Test form inputs are reset
-        expect($scope.vm.sections.length).toEqual(2);
-        expect($scope.vm.sections[0]).toEqual(mockSection);
-        expect($scope.vm.sections[1]).toEqual(mockSection);
+                expect($scope.vm.sections.length).toEqual(2);
+                expect($scope.vm.sections[0]).toEqual(mockSection);
+                expect($scope.vm.sections[1]).toEqual(mockSection);
 
-      }));
+            }));
+        });
     });
-  });
 }());

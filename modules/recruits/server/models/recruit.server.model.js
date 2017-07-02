@@ -27,18 +27,18 @@ var RecruitSchema = new Schema({
     start_votes: {
         type: Date
     },
-    end_votes:{
+    end_votes: {
         type: Date
     },
     status: {
         type: String,
-        enum:['Refused','Accepted','INValidation','INVotes'],
-        default:'INValidation'
+        enum: ['Refused', 'Accepted', 'INValidation', 'INVotes'],
+        default: 'INValidation'
     },
     updated: {
         type: Date
     },
-    votes:[{
+    votes: [{
         type: Schema.ObjectId,
         ref: 'Vote'
     }],

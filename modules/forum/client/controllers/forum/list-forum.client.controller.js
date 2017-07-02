@@ -5,7 +5,7 @@
         .module('app.forum')
         .controller('ForumListController', ForumListController);
 
-    ForumListController.$inject = ['CategoriesService','SectionsService','Authentication'];
+    ForumListController.$inject = ['CategoriesService', 'SectionsService', 'Authentication'];
 
     function ForumListController(CategoriesService, SectionService, Authentication) {
         var vm = this;

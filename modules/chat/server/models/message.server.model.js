@@ -18,7 +18,7 @@ var ChatMessage = new Schema({
         required: true,
         validate: [contentLimit, 'The value of name `{PATH}` (`{VALUE}`) exceeds the maximum allowed length 1000.']
     },
-    channel:{
+    channel: {
         type: Schema.Types.ObjectId,
         ref: 'Channel'
     },

@@ -22,8 +22,8 @@ angular.module('app.users').config(['$stateProvider', 'RouteHelpersProvider',
                 controllerAs: 'vm',
                 data: {
                     pageTitle: 'Settings'
-                },
-                //resolve: helper.resolveFor('icons')
+                }
+                // resolve: helper.resolveFor('icons')
             })
             .state('app.settings.password', {
                 url: '/password',
@@ -51,7 +51,7 @@ angular.module('app.users').config(['$stateProvider', 'RouteHelpersProvider',
                 data: {
                     pageTitle: 'Settings picture'
                 },
-                resolve: helper.resolveFor('ngImgCrop','ngFileUpload')
+                resolve: helper.resolveFor('ngImgCrop', 'ngFileUpload')
             })
             .state('page.authentication', {
                 abstract: true,
@@ -126,7 +126,7 @@ angular.module('app.users').config(['$stateProvider', 'RouteHelpersProvider',
                 url: '/profile',
                 template: '<ui-view/>',
                 data: {
-                    roles: ['user','team','admin']
+                    roles: ['user', 'team', 'admin']
                 }
             })
             .state('app.profile.user', {
@@ -138,7 +138,7 @@ angular.module('app.users').config(['$stateProvider', 'RouteHelpersProvider',
                     userResolve: getUser
                 },
                 data: {
-                    roles: ['user','team','admin']
+                    roles: ['user', 'team', 'admin']
                 }
             });
 

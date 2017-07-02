@@ -12,5 +12,5 @@ var ipaddr = require('ipaddr.js'),
 
 
 exports.verifyRecaptcha = function (req, res) {
-    
+
 };

@@ -20,7 +20,7 @@ var ReplySchema = new Schema({
         type: Date,
         default: Date.now
     },
-    updated:{
+    updated: {
         type: Date
     },
     topic: {

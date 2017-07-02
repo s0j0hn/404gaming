@@ -48,7 +48,7 @@ exports.update = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else if (isCurrentUserOwnerOrAdmin){
+        } else if (isCurrentUserOwnerOrAdmin) {
             res.json(comment);
         } else {
             return res.status(403).send({
@@ -70,7 +70,7 @@ exports.delete = function (req, res) {
             return res.status(400).send({
                 message: errorHandler.getErrorMessage(err)
             });
-        } else if (isCurrentUserOwnerOrAdmin){
+        } else if (isCurrentUserOwnerOrAdmin) {
             res.json(comment);
         } else {
             return res.status(403).send({
@@ -92,7 +92,7 @@ exports.list = function (req, res) {
         });
     }
 
-    CommentArticle.find({'article': mongoose.Types.ObjectId(id)}).sort('created').populate('user', 'username profileImageURL created roles').exec(function (err, comments) {
+    CommentArticle.find({ 'article': mongoose.Types.ObjectId(id) }).sort('created').populate('user', 'username profileImageURL created roles').exec(function (err, comments) {
         if (err) {
             return res.status(400).send({
                 error_message: errorHandler.getErrorMessage(err)

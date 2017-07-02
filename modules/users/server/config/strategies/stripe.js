@@ -9,11 +9,11 @@ var passport = require('passport'),
 
 module.exports = function (config) {
     passport.use(new StripeStrategy({
-            clientID: config.stripe.clientID,
-            clientSecret: config.stripe.clientSecret,
-            callbackURL: config.stripe.callbackURL,
-            passReqToCallback: true
-        },
+        clientID: config.stripe.clientID,
+        clientSecret: config.stripe.clientSecret,
+        callbackURL: config.stripe.callbackURL,
+        passReqToCallback: true
+    },
         function (req, accessToken, refreshToken, profile, done) {
             // Set the provider data and include tokens
             var providerData = profile._json;
@@ -44,5 +44,5 @@ module.exports = function (config) {
             // Save the user OAuth profile
             users.saveOAuthUserProfile(req, providerUserProfile, done);
         }));
-    
+
 };

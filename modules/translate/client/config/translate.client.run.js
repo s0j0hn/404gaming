@@ -7,7 +7,7 @@
     ;
     translateRun.$inject = ['$rootScope', '$translate'];
 
-    function translateRun($rootScope, $translate){
+    function translateRun($rootScope, $translate) {
 
         // Internationalization
         // ----------------------
@@ -17,9 +17,9 @@
             listIsOpen: false,
             // list of available languages
             available: {
-                'en':       'English',
-                'es_AR':    'Español',
-                'fr':       'Français'
+                'en': 'English',
+                'es_AR': 'Español',
+                'fr': 'Français'
             },
             // display always the current ui language
             init: function () {
@@ -33,11 +33,11 @@
                 // save a reference for the current language
                 $rootScope.language.selected = $rootScope.language.available[localeId];
                 // finally toggle dropdown
-                $rootScope.language.listIsOpen = ! $rootScope.language.listIsOpen;
+                $rootScope.language.listIsOpen = !$rootScope.language.listIsOpen;
             }
         };
 
         $rootScope.language.init();
 
     }
-})();
+}());

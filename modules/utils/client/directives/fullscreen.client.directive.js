@@ -1,4 +1,4 @@
-/**=========================================================
+/** =========================================================
  * Module: fullscreen.js
  * Toggle the fullscreen mode on/off
  =========================================================*/
@@ -20,31 +20,30 @@
 
         function link(scope, element) {
           // Not supported under IE
-          if( Browser.msie ) {
-            element.addClass('hide');
-          }
-          else {
-            element.on('click', function (e) {
-                e.preventDefault();
+            if (Browser.msie) {
+                element.addClass('hide');
+            } else {
+                element.on('click', function (e) {
+                    e.preventDefault();
 
-                if (screenfull.enabled) {
-                  
-                  screenfull.toggle();
-                  
+                    if (screenfull.enabled) {
+
+                        screenfull.toggle();
+
                   // Switch icon indicator
-                  if(screenfull.isFullscreen)
-                    $(this).children('em').removeClass('fa-expand').addClass('fa-compress');
-                  else
+                        if (screenfull.isFullscreen)
+                            $(this).children('em').removeClass('fa-expand').addClass('fa-compress');
+                        else
                     $(this).children('em').removeClass('fa-compress').addClass('fa-expand');
 
-                } else {
-                  $.error('Fullscreen not enabled');
-                }
+                    } else {
+                        $.error('Fullscreen not enabled');
+                    }
 
-            });
-          }
+                });
+            }
         }
     }
 
 
-})();
+}());

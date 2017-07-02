@@ -5,7 +5,7 @@
         .module('app.users.admin')
         .controller('UserListController', UserListController);
 
-    UserListController.$inject = ['$scope', '$filter', 'AdminService','$state','DTOptionsBuilder', 'DTColumnDefBuilder'];
+    UserListController.$inject = ['$scope', '$filter', 'AdminService', '$state', 'DTOptionsBuilder', 'DTColumnDefBuilder'];
 
     function UserListController($scope, $filter, AdminService, $state, DTOptionsBuilder, DTColumnDefBuilder) {
         var vm = this;
@@ -17,11 +17,11 @@
             .withPaginationType('full_numbers')
             .withDOM('<"html5buttons"B>lTfgitp')
             .withButtons([
-                {extend: 'copy',  className: 'btn-sm' },
-                {extend: 'csv',   className: 'btn-sm' },
-                {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
-                {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
-                {extend: 'print', className: 'btn-sm' }
+                { extend: 'copy', className: 'btn-sm' },
+                { extend: 'csv', className: 'btn-sm' },
+                { extend: 'excel', className: 'btn-sm', title: 'XLS-File' },
+                { extend: 'pdf', className: 'btn-sm', title: $('title').text() },
+                { extend: 'print', className: 'btn-sm' }
             ]);
 
         vm.dtColumnDefs = [
@@ -65,7 +65,7 @@
             user.$update(function () {
                 $state.reload();
             }, function (errorResponse) {
-                //Notification.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
+                // Notification.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
             });
         }
     }

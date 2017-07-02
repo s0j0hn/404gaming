@@ -25,11 +25,11 @@
         $rootScope.$storage = $window.localStorage;
 
         // Uncomment this to disable template cache
-        /*$rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-            if (typeof(toState) !== 'undefined'){
-              $templateCache.remove(toState.templateUrl);
-            }
-        });*/
+        /* $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+         if (typeof(toState) !== 'undefined'){
+         $templateCache.remove(toState.templateUrl);
+         }
+         });*/
 
         // Allows to use branding color with interpolation
         // {{ colorByName('primary') }}
@@ -45,7 +45,7 @@
 
         // Hook not found
         $rootScope.$on('$stateNotFound',
-            function(event, unfoundState /*, fromState, fromParams*/ ) {
+            function(event, unfoundState /* , fromState, fromParams*/) {
                 console.log(unfoundState.to); // "lazy.state"
                 console.log(unfoundState.toParams); // {a:1, b:2}
                 console.log(unfoundState.options); // {inherit:false} + default options
@@ -57,7 +57,7 @@
             });
         // Hook success
         $rootScope.$on('$stateChangeSuccess',
-            function( /*event, toState, toParams, fromState, fromParams*/ ) {
+            function(/* event, toState, toParams, fromState, fromParams*/) {
                 // display new view from top
                 $window.scrollTo(0, 0);
                 // Save the route title
@@ -74,4 +74,4 @@
 
     }
 
-})();
+}());

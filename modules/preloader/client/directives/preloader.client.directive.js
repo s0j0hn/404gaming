@@ -10,7 +10,7 @@
 
         var directive = {
             restrict: 'EAC',
-            template: 
+            template:
               '<div class="preloader-progress">' +
                   '<div class="preloader-progress-bar" ' +
                        'ng-style="{width: loadCounter + \'%\'}"></div>' +
@@ -19,74 +19,74 @@
         };
         return directive;
 
-        ///////
+        // /////
 
         function link(scope, el) {
 
-          scope.loadCounter = 0;
+            scope.loadCounter = 0;
 
-          var counter  = 0,
-              timeout;
+            var counter = 0,
+                timeout;
 
           // disables scrollbar
-          angular.element('body').css('overflow', 'hidden');
+            angular.element('body').css('overflow', 'hidden');
           // ensure class is present for styling
-          el.addClass('preloader');
+            el.addClass('preloader');
 
-          appReady().then(endCounter);
+            appReady().then(endCounter);
 
-          timeout = $timeout(startCounter);
+            timeout = $timeout(startCounter);
 
-          ///////
+          // /////
 
-          function startCounter() {
+            function startCounter() {
 
-            var remaining = 100 - counter;
-            counter = counter + (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
+                var remaining = 100 - counter;
+                counter += (0.015 * Math.pow(1 - Math.sqrt(remaining), 2));
 
-            scope.loadCounter = parseInt(counter, 10);
+                scope.loadCounter = parseInt(counter, 10);
 
-            timeout = $timeout(startCounter, 20);
-          }
+                timeout = $timeout(startCounter, 20);
+            }
 
-          function endCounter() {
+            function endCounter() {
 
-            $timeout.cancel(timeout);
+                $timeout.cancel(timeout);
 
-            scope.loadCounter = 100;
+                scope.loadCounter = 100;
 
-            $timeout(function(){
+                $timeout(function() {
               // animate preloader hiding
-              $animate.addClass(el, 'preloader-hidden');
+                    $animate.addClass(el, 'preloader-hidden');
               // retore scrollbar
-              angular.element('body').css('overflow', '');
-            }, 300);
-          }
+                    angular.element('body').css('overflow', '');
+                }, 300);
+            }
 
-          function appReady() {
-            var deferred = $q.defer();
-            var viewsLoaded = 0;
+            function appReady() {
+                var deferred = $q.defer();
+                var viewsLoaded = 0;
             // if this doesn't sync with the real app ready
             // a custom event must be used instead
-            var off = scope.$on('$viewContentLoaded', function () {
-              viewsLoaded ++;
-              // we know there are at least two views to be loaded 
+                var off = scope.$on('$viewContentLoaded', function () {
+                    viewsLoaded++;
+              // we know there are at least two views to be loaded
               // before the app is ready (1-index.html 2-app*.html)
-              if ( viewsLoaded === 2) {
+                    if (viewsLoaded === 2) {
                 // with resolve this fires only once
-                $timeout(function(){
-                  deferred.resolve();
-                }, 3000);
+                        $timeout(function() {
+                            deferred.resolve();
+                        }, 3000);
 
-                off();
-              }
+                        off();
+                    }
 
-            });
+                });
 
-            return deferred.promise;
-          }
+                return deferred.promise;
+            }
 
-        } //link
+        } // link
     }
 
-})();
+}());

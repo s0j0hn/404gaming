@@ -9,18 +9,18 @@
     function SidebarLoader(Menus) {
         this.getMenu = getMenu;
 
-        ////////////////
+        // //////////////
 
         function getMenu(onReady, onError) {
-          onError = onError || function() { alert('Failure loading menu'); };
+            onError = onError || function() { alert('Failure loading menu'); };
 
-          var menu = Menus.getMenu('sidebar');
+            var menu = Menus.getMenu('sidebar');
 
-          if( menu )
-            onReady( menu );
-          else
+            if (menu)
+                onReady(menu);
+            else
             onError();
 
         }
     }
-})();
+}());

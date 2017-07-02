@@ -1,20 +1,20 @@
 // Notifications service used to communicate Notifications REST endpoints
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
+    angular
     .module('app.notifications')
     .factory('NotificationsService', NotificationsService);
 
-  NotificationsService.$inject = ['$resource'];
+    NotificationsService.$inject = ['$resource'];
 
-  function NotificationsService($resource) {
-    return $resource('api/notifications/:notificationId', {
-      notificationId: '@_id'
-    }, {
-      update: {
-        method: 'PUT'
-      }
-    });
-  }
+    function NotificationsService($resource) {
+        return $resource('api/notifications/:notificationId', {
+            notificationId: '@_id'
+        }, {
+            update: {
+                method: 'PUT'
+            }
+        });
+    }
 }());

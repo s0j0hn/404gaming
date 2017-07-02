@@ -1,24 +1,24 @@
-﻿(function () {
-  'use strict';
+(function () {
+    'use strict';
 
   // Users directive used to force lowercase input
-  angular
+    angular
     .module('app.users')
     .directive('lowercase', lowercase);
 
-  function lowercase() {
-    var directive = {
-      require: 'ngModel',
-      link: link
-    };
+    function lowercase() {
+        var directive = {
+            require: 'ngModel',
+            link: link
+        };
 
-    return directive;
+        return directive;
 
-    function link(scope, element, attrs, modelCtrl) {
-      modelCtrl.$parsers.push(function (input) {
-        return input ? input.toLowerCase() : '';
-      });
-      element.css('text-transform', 'lowercase');
+        function link(scope, element, attrs, modelCtrl) {
+            modelCtrl.$parsers.push(function (input) {
+                return input ? input.toLowerCase() : '';
+            });
+            element.css('text-transform', 'lowercase');
+        }
     }
-  }
 }());

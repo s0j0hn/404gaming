@@ -81,14 +81,14 @@ exports.userByID = function (req, res, next, id) {
             message: 'User is invalid'
         });
     }
-    if (req.user.roles.indexOf('admin') >= 0){
+    if (req.user.roles.indexOf('admin') >= 0) {
         User.findById(id, '-salt -password -providerData').exec(function (err, user) {
             if (err) {
                 return next(err);
             } else if (!user) {
                 return next(new Error('Failed to load user ' + id));
             }
-            if (id != req.user._id){
+            if (id != req.user._id) {
                 user.views += 1;
                 user.save(function () {
 
@@ -104,7 +104,7 @@ exports.userByID = function (req, res, next, id) {
             } else if (!user) {
                 return next(new Error('Failed to load user ' + id));
             }
-            if (id != req.user._id){
+            if (id != req.user._id) {
                 user.views += 1;
                 user.save(function () {
 

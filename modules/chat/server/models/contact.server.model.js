@@ -18,7 +18,7 @@ var MessageSchema = new Schema({
         required: true,
         validate: [labelLimit, 'The value of name `{PATH}` (`{VALUE}`) exceeds the maximum allowed length 100.']
     },
-    blocked:{
+    blocked: {
         type: Boolean,
         default: false
     },

@@ -22,7 +22,6 @@ exports.create = function(req, res) {
     recruit.end_votes = endDate.getTime();
 
 
-
     recruit.save(function(err) {
         if (err) {
             return res.status(400).send({
@@ -82,34 +81,34 @@ exports.delete = function(req, res) {
  * List of Recruits
  */
 exports.list = function(req, res) {
-    if (req.user.roles.indexOf('admin') >= 0){
+    if (req.user.roles.indexOf('admin') >= 0) {
         Recruit
             .find()
             .sort('-created')
             .populate('user', 'username profileImageURL created roles')
             .exec(function(err, recruits) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.json(recruits);
-            }
-        });
-    } else if (req.user.roles.indexOf('team') >= 0){
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.json(recruits);
+                }
+            });
+    } else if (req.user.roles.indexOf('team') >= 0) {
         Recruit
-            .find({'status': { $in: ['INVotes', 'Accepted', 'Refused']}})
+            .find({ 'status': { $in: ['INVotes', 'Accepted', 'Refused'] } })
             .sort('-created')
             .populate('user', 'username profileImageURL created roles')
             .exec(function(err, recruits) {
-            if (err) {
-                return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
-                });
-            } else {
-                res.json(recruits);
-            }
-        });
+                if (err) {
+                    return res.status(400).send({
+                        message: errorHandler.getErrorMessage(err)
+                    });
+                } else {
+                    res.json(recruits);
+                }
+            });
     }
 };
 

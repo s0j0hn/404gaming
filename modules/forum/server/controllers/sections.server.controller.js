@@ -75,10 +75,10 @@ exports.delete = function(req, res) {
  */
 exports.list = function(req, res) {
 
-    if (req.user.roles.indexOf('admin') >= 0){
+    if (req.user.roles.indexOf('admin') >= 0) {
         Section.find().sort('position')
-            .populate('categorie','name visibility')
-            .populate('latestPost','name created user')
+            .populate('categorie', 'name visibility')
+            .populate('latestPost', 'name created user')
             .exec(function(err, sections) {
                 if (err) {
                     return res.status(400).send({
@@ -88,10 +88,10 @@ exports.list = function(req, res) {
                     res.json(sections);
                 }
             });
-    }else {
-        Section.find({ visibility : { $in : req.user.roles }}).sort('position')
-            .populate('categorie','name visibility')
-            .populate('latestPost','name created')
+    } else {
+        Section.find({ visibility: { $in: req.user.roles } }).sort('position')
+            .populate('categorie', 'name visibility')
+            .populate('latestPost', 'name created')
             .exec(function(err, sections) {
                 if (err) {
                     return res.status(400).send({
@@ -115,7 +115,7 @@ exports.sectionByID = function(req, res, next, id) {
         });
     }
 
-    Section.findById(id).populate('categorie','name visibility').exec(function (err, section) {
+    Section.findById(id).populate('categorie', 'name visibility').exec(function (err, section) {
         if (err) {
             return next(err);
         } else if (!section) {

@@ -49,12 +49,12 @@ exports.signup = function (req, res) {
 
     Ban.find().sort('created').exec(function(err, bans) {
         for (var i = 0; i < bans.length; i++) {
-            //var ban = bans[i];
-            //for (var j = 0; j < req.user.ip_address.length; j++){
-                if (iplib.cidrSubnet(bans[i].address).contains(ip)){
-                    banned = true;
-                }
-            //}
+            // var ban = bans[i];
+            // for (var j = 0; j < req.user.ip_address.length; j++){
+            if (iplib.cidrSubnet(bans[i].address).contains(ip)) {
+                banned = true;
+            }
+            // }
         }
     });
 
@@ -71,8 +71,8 @@ exports.signup = function (req, res) {
     var user = new User(req.body);
     user.provider = 'local';
 
-    for(var i = 0; i < user.ip_address.length; i++){
-        if (user.ip_address[i] === ip || user.ip_address.length >= 0){
+    for (var i = 0; i < user.ip_address.length; i++) {
+        if (user.ip_address[i] === ip || user.ip_address.length >= 0) {
             user.ip_address[i] = ip;
         } else {
             user.ip_address.push(ip);
@@ -122,7 +122,6 @@ exports.signup = function (req, res) {
 // };
 
 
-
 /**
  * Signin after passport authentication
  */
@@ -133,7 +132,7 @@ exports.signin = function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err || !user) {
             res.status(422).send(info);
-        } else if(user.roles.indexOf('banned') >= 0 || banned) {
+        } else if (user.roles.indexOf('banned') >= 0 || banned) {
             res.status(400).send({
                 message: 'Your IP address is BANNED or using VPN/Proxy'
             });
@@ -145,8 +144,8 @@ exports.signin = function (req, res, next) {
             User.findById(user._id, 'username roles created posts ip_address').exec(function (err, user) {
                 Ban.find().sort('created').exec(function(err, bans) {
                     for (var i = 0; i < bans.length; i++) {
-                        for (var j = 0; j < user.ip_address.length; j++){
-                            if (iplib.cidrSubnet(bans[i].address).contains(user.ip_address[j])){
+                        for (var j = 0; j < user.ip_address.length; j++) {
+                            if (iplib.cidrSubnet(bans[i].address).contains(user.ip_address[j])) {
                                 banned = true;
                             }
                         }
@@ -165,8 +164,8 @@ exports.signin = function (req, res, next) {
                         message: 'Your IP address is BANNED or using VPN/Proxy'
                     });
                 }
-                for(var i = 0; i < user.ip_address.length + 1; i++){
-                    if (user.ip_address[i] === ip || user.ip_address.length >= 0){
+                for (var i = 0; i < user.ip_address.length + 1; i++) {
+                    if (user.ip_address[i] === ip || user.ip_address.length >= 0) {
                         user.ip_address[i] = ip;
                         break;
                     } else {
@@ -275,34 +274,32 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
         User.findOne(searchQuery, function (err, user) {
             if (err) {
                 return done(err);
-            } else {
-                if (!user) {
-                    var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
+            } else if (!user) {
+                var possibleUsername = providerUserProfile.username || ((providerUserProfile.email) ? providerUserProfile.email.split('@')[0] : '');
 
-                    User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
-                        user = new User({
-                            firstName: providerUserProfile.firstName,
-                            lastName: providerUserProfile.lastName,
-                            username: availableUsername,
-                            displayName: providerUserProfile.displayName,
-                            profileImageURL: providerUserProfile.profileImageURL,
-                            provider: providerUserProfile.provider,
-                            providerData: providerUserProfile.providerData
-                        });
+                User.findUniqueUsername(possibleUsername, null, function (availableUsername) {
+                    user = new User({
+                        firstName: providerUserProfile.firstName,
+                        lastName: providerUserProfile.lastName,
+                        username: availableUsername,
+                        displayName: providerUserProfile.displayName,
+                        profileImageURL: providerUserProfile.profileImageURL,
+                        provider: providerUserProfile.provider,
+                        providerData: providerUserProfile.providerData
+                    });
 
                         // Email intentionally added later to allow defaults (sparse settings) to be applid.
                         // Handles case where no email is supplied.
                         // See comment: https://github.com/meanjs/mean/pull/1495#issuecomment-246090193
-                        user.email = providerUserProfile.email;
+                    user.email = providerUserProfile.email;
 
                         // And save the user
-                        user.save(function (err) {
-                            return done(err, user, info);
-                        });
+                    user.save(function (err) {
+                        return done(err, user, info);
                     });
-                } else {
-                    return done(err, user, info);
-                }
+                });
+            } else {
+                return done(err, user, info);
             }
         });
     } else {

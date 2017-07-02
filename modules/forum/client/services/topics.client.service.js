@@ -1,20 +1,20 @@
 // Topics service used to communicate Topics REST endpoints
 (function () {
-  'use strict';
+    'use strict';
 
-  angular
+    angular
     .module('app.forum')
     .factory('TopicsService', TopicsService);
 
-  TopicsService.$inject = ['$resource'];
+    TopicsService.$inject = ['$resource'];
 
-  function TopicsService($resource) {
-    return $resource('api/topics/:topicId', {
-      topicId: '@_id'
-    }, {
-      update: {
-        method: 'PUT'
-      }
-    });
-  }
+    function TopicsService($resource) {
+        return $resource('api/topics/:topicId', {
+            topicId: '@_id'
+        }, {
+            update: {
+                method: 'PUT'
+            }
+        });
+    }
 }());

@@ -5,7 +5,7 @@
         .module('app.bans')
         .controller('BansListController', BansListController);
 
-    BansListController.$inject = ['BansService','DTOptionsBuilder', 'DTColumnDefBuilder'];
+    BansListController.$inject = ['BansService', 'DTOptionsBuilder', 'DTColumnDefBuilder'];
 
     function BansListController(BansService, DTOptionsBuilder, DTColumnDefBuilder) {
         var vm = this;
@@ -14,13 +14,13 @@
         vm.getSelected = getSelected;
 
         function getSelected() {
-            var banList= [];
+            var banList = [];
             return banList;
         }
 
         function deleteAll(banList) {
             if ($window.confirm('Are you sure you want to delete?')) {
-                for (var i = 0; i > banList.length(); i++){
+                for (var i = 0; i > banList.length(); i++) {
                     banList[i].$remove();
                 }
                 $state.go('app.bans.list');
@@ -32,11 +32,11 @@
             .withPaginationType('full_numbers')
             .withDOM('<"html5buttons"B>lTfgitp')
             .withButtons([
-                {extend: 'copy',  className: 'btn-sm' },
-                {extend: 'csv',   className: 'btn-sm' },
-                {extend: 'excel', className: 'btn-sm', title: 'XLS-File'},
-                {extend: 'pdf',   className: 'btn-sm', title: $('title').text() },
-                {extend: 'print', className: 'btn-sm' }
+                { extend: 'copy', className: 'btn-sm' },
+                { extend: 'csv', className: 'btn-sm' },
+                { extend: 'excel', className: 'btn-sm', title: 'XLS-File' },
+                { extend: 'pdf', className: 'btn-sm', title: $('title').text() },
+                { extend: 'print', className: 'btn-sm' }
             ]);
 
         vm.dtColumnDefs = [

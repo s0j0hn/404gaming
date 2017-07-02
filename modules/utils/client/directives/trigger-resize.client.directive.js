@@ -1,4 +1,4 @@
-/**=========================================================
+/** =========================================================
  * Module: trigger-resize.js
  * Triggers a window resize event from any element
  =========================================================*/
@@ -18,17 +18,17 @@
         return directive;
 
         function link(scope, element, attributes) {
-          element.on('click', function(){
-            $timeout(function(){
+            element.on('click', function() {
+                $timeout(function() {
               // all IE friendly dispatchEvent
-              var evt = document.createEvent('UIEvents');
-              evt.initUIEvent('resize', true, false, $window, 0);
-              $window.dispatchEvent(evt);
+                    var evt = document.createEvent('UIEvents');
+                    evt.initUIEvent('resize', true, false, $window, 0);
+                    $window.dispatchEvent(evt);
               // modern dispatchEvent way
               // $window.dispatchEvent(new Event('resize'));
-            }, attributes.triggerResize || 300);
-          });
+                }, attributes.triggerResize || 300);
+            });
         }
     }
 
-})();
+}());

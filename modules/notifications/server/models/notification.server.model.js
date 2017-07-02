@@ -26,15 +26,15 @@ var NotificationSchema = new Schema({
         required: 'Please fill Notification description',
         trim: true
     },
-    topic:{
+    topic: {
         type: Schema.ObjectId,
         ref: 'Topic'
     },
-    section:{
+    section: {
         type: Schema.ObjectId,
         ref: 'Section'
     },
-    vote:{
+    vote: {
         type: Schema.ObjectId,
         ref: 'Vote'
     },
@@ -42,10 +42,10 @@ var NotificationSchema = new Schema({
         type: String,
         default: null
     },
-    type:{
+    type: {
         type: String,
-        default:'information',
-        enum:[
+        default: 'information',
+        enum: [
             'new_reply',
             'new_vote',
             'user_warning',
@@ -57,13 +57,13 @@ var NotificationSchema = new Schema({
             'forum_banned'
         ]
     },
-    seen:{
+    seen: {
         type: Boolean,
         default: false
     },
     icon_class: {
         type: String,
-        enum:[
+        enum: [
             'fa-envelope text-warning',
             'fa-ban text-danger',
             'fa-thumbs-o-up text-success',
@@ -72,7 +72,7 @@ var NotificationSchema = new Schema({
             'fa-pencil-square-o  text-primary'],
         default: 'fa-exclamation-triangle  text-warning'
     },
-    user:{
+    user: {
         type: Schema.ObjectId,
         ref: 'User',
         required: 'Please fill Notification User'

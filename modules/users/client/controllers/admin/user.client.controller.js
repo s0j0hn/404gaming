@@ -26,7 +26,7 @@
                 } else {
                     vm.user.$remove(function () {
                         $state.go('app.admin.users');
-                        //Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User deleted successfully!' });
+                        // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User deleted successfully!' });
                     });
                 }
             }
@@ -42,7 +42,7 @@
             var user = vm.user;
             if (user.roles.indexOf('admin') >= 0) {
                 user.rank = 'Administrator';
-            } else if (user.roles.indexOf('team') >= 0){
+            } else if (user.roles.indexOf('team') >= 0) {
                 user.rank = 'Team Member';
             }
 
@@ -50,9 +50,9 @@
                 $state.go('app.admin.user', {
                     userId: user._id
                 });
-                //Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User saved successfully!' });
+                // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User saved successfully!' });
             }, function (errorResponse) {
-                //Notification.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
+                // Notification.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
             });
         }
 

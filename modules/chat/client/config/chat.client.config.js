@@ -9,7 +9,7 @@ angular.module('app.chat').run(['Menus',
             state: 'app.chat',
             iconClass: 'fa fa-weixin',
             type: 'item',
-            roles: ['user','admin','team']
+            roles: ['user', 'admin', 'team']
         });
     }
 ]);

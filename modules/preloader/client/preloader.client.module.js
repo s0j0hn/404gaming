@@ -3,5 +3,5 @@
 
     ApplicationConfiguration.registerModule('app.preloader');
 
-})();
+}());
 

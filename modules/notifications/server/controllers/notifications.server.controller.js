@@ -80,18 +80,18 @@ exports.delete = function(req, res) {
  * List of Notifications
  */
 exports.list = function(req, res) {
-    Notification.find({'user': req.user._id })
+    Notification.find({ 'user': req.user._id })
         .sort('-created')
         .populate('user', 'username roles rank')
         .exec(function(err, notifications) {
-        if (err) {
-            return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-            });
-        } else {
-            res.json(notifications);
-        }
-    });
+            if (err) {
+                return res.status(400).send({
+                    message: errorHandler.getErrorMessage(err)
+                });
+            } else {
+                res.json(notifications);
+            }
+        });
 };
 
 /**

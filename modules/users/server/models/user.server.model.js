@@ -87,29 +87,29 @@ var UserSchema = new Schema({
         lowercase: true,
         trim: true
     },
-    loginTokenExpires:{
+    loginTokenExpires: {
         type: Date
     },
-    loginToken:{
+    loginToken: {
         type: String
     },
     password: {
         type: String,
         default: ''
     },
-    warnings:{
+    warnings: {
         type: Number,
         default: 0,
         min: 0,
         max: 3
     },
-    ip_address:{
+    ip_address: {
         type: Array,
         default: []
     },
-    rank:{
+    rank: {
         type: String,
-        enum:['Administrator','Team Member','Senior User','Junior User','Banned'],
+        enum: ['Administrator', 'Team Member', 'Senior User', 'Junior User', 'Banned'],
         default: 'Junior User'
     },
     views: {
@@ -140,7 +140,7 @@ var UserSchema = new Schema({
     roles: {
         type: [{
             type: String,
-            enum: ['user','team','admin','banned']
+            enum: ['user', 'team', 'admin', 'banned']
         }],
         default: ['user'],
         required: 'Please provide at least one role'
@@ -165,14 +165,13 @@ var UserSchema = new Schema({
  * We create the secret key from user information
  * NOT SECURE METHOD !!
  */
-if (config.app.mongoEncryption.activated){
+if (config.app.mongoEncryption.activated) {
     UserSchema.plugin(encrypt, {
-        secret:config.app.mongoEncryption.SecretKey,
-        excludeFromEncryption: ['roles','resetPasswordToken','resetPasswordExpires'],
-        //additionalAuthenticatedFields: ['roles']
+        secret: config.app.mongoEncryption.SecretKey,
+        excludeFromEncryption: ['roles', 'resetPasswordToken', 'resetPasswordExpires']
+        // additionalAuthenticatedFields: ['roles']
     });
 }
-
 
 
 /**

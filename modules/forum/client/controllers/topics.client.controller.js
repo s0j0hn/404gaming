@@ -6,7 +6,7 @@
         .module('app.forum')
         .controller('TopicsController', TopicsController);
 
-    TopicsController.$inject = ['$scope','$stateParams', '$state', '$window', 'Authentication', 'topicResolve','ReplysService','replyResolve', '$filter'];
+    TopicsController.$inject = ['$scope', '$stateParams', '$state', '$window', 'Authentication', 'topicResolve', 'ReplysService', 'replyResolve', '$filter'];
 
     function TopicsController ($scope, $stateParams, $state, $window, Authentication, topic, ReplysService, reply, $filter) {
         var vm = this;
@@ -23,8 +23,8 @@
         vm.figureOutItemsToDisplay = figureOutItemsToDisplay;
         vm.pageChanged = pageChanged;
 
-        if (vm.topic._id){
-            ReplysService.query({topicId: $stateParams.topicId}, function (data) {
+        if (vm.topic._id) {
+            ReplysService.query({ topicId: $stateParams.topicId }, function (data) {
                 vm.replys = data;
                 vm.buildPager();
             });
@@ -51,7 +51,7 @@
         function pageChanged() {
             vm.figureOutItemsToDisplay();
         }
-        /*vm.banUser = function (user) {
+        /* vm.banUser = function (user) {
             user.roles = ['banned'];
             user.$update(function () {
                 $state.reload();
@@ -94,7 +94,7 @@
         // Remove existing Reply
         function remove() {
             if ($window.confirm('Are you sure you want to delete?')) {
-                vm.topic.$remove($state.go('app.forum.sections.topics.list',{sectionId: $stateParams.sectionId}));
+                vm.topic.$remove($state.go('app.forum.sections.topics.list', { sectionId: $stateParams.sectionId }));
             }
         }
 

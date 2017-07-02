@@ -16,7 +16,7 @@ var CategorieSchema = new Schema({
         required: 'Please fill Categorie name',
         trim: true
     },
-    position:{
+    position: {
         type: Number,
         min: 1,
         max: 65,
@@ -24,7 +24,7 @@ var CategorieSchema = new Schema({
     },
     visibility: {
         type: String,
-        enum:['admin','team','user'],
+        enum: ['admin', 'team', 'user'],
         default: 'user'
     },
     created: {

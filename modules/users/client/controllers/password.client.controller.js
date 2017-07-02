@@ -55,14 +55,14 @@
             // Show user success message and clear form
             vm.credentials = null;
             swal('Success', 'Password reset email sent successfully!', 'success');
-            //Notification.success({ message: response.message, title: '<i class="glyphicon glyphicon-ok"></i> Password reset email sent successfully!' });
+            // Notification.success({ message: response.message, title: '<i class="glyphicon glyphicon-ok"></i> Password reset email sent successfully!' });
         }
 
         function onRequestPasswordResetError(response) {
             // Show user error message and clear form
             vm.credentials = null;
             swal('Error', response.data.message, 'error');
-            //Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-trash"></i> Failed to send password reset email!', delay: 4000 });
+            // Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-trash"></i> Failed to send password reset email!', delay: 4000 });
         }
 
         function onResetPasswordSuccess(response) {
@@ -71,14 +71,14 @@
 
             // Attach user profile
             Authentication.user = response;
-            //Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Password reset successful!' });
+            // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Password reset successful!' });
             // And redirect to the index page
             swal('Success', 'Password reset successful!', 'success');
             $location.path('/password/reset/success');
         }
 
         function onResetPasswordError(response) {
-            //Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-trash"></i> Password reset failed!', delay: 4000 });
+            // Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-trash"></i> Password reset failed!', delay: 4000 });
         }
     }
 }());

@@ -31,10 +31,10 @@ exports.invokeRolesPolicies = function () {
         roles: ['team'],
         allows: [{
             resources: '/api/channels',
-            permissions: ['get','post']
+            permissions: ['get', 'post']
         }, {
             resources: '/api/channels/:channelId',
-            permissions: ['get','put']
+            permissions: ['get', 'put']
         }, {
             resources: '/api/channels/:channelId/join',
             permissions: ['post']
@@ -46,10 +46,10 @@ exports.invokeRolesPolicies = function () {
         roles: ['user'],
         allows: [{
             resources: '/api/channels',
-            permissions: ['get','post']
+            permissions: ['get', 'post']
         }, {
             resources: '/api/channels/:channelId',
-            permissions: ['get','put']
+            permissions: ['get', 'put']
         }, {
             resources: '/api/channels/:channelId/join',
             permissions: ['put']
@@ -76,15 +76,13 @@ exports.isAllowed = function (req, res, next) {
         if (err) {
             // An authorization error occurred.
             return res.status(500).send('Unexpected authorization error');
-        } else {
-            if (isAllowed) {
+        } else if (isAllowed) {
                 // Access granted! Invoke next middleware
-                return next();
-            } else {
-                return res.status(403).json({
-                    message: 'User is not authorized'
-                });
-            }
+            return next();
+        } else {
+            return res.status(403).json({
+                message: 'User is not authorized'
+            });
         }
     });
 };

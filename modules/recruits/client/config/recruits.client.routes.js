@@ -58,7 +58,7 @@
                     recruitResolve: getRecruit
                 },
                 data: {
-                    roles: ['admin','user','team'],
+                    roles: ['admin', 'user', 'team'],
                     pageTitle: 'Edit Recruit {{ recruitResolve.name }}'
                 }
             });

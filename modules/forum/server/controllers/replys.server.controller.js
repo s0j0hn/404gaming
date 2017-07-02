@@ -34,12 +34,12 @@ function createNotification(res, title, description, icon, type, topic, user, se
     notification.type = type;
 
     if (type == 'new_reply') {
-        notification.link = 'app.forum.sections.topics.view({ topicId: '+ topic._id + ', sectionId: '+ sectionId + '})';
+        notification.link = 'app.forum.sections.topics.view({ topicId: ' + topic._id + ', sectionId: ' + sectionId + '})';
         notification.topic = topic;
         notification.section = sectionId;
 
     } else if (type == 'new_vote') {
-        notification.link = 'app.vote.view({ voteId: '+ topic._id+ ' })';
+        notification.link = 'app.vote.view({ voteId: ' + topic._id + ' })';
         notification.vote = topic;
     } else {
         notification.vote = null;
@@ -108,7 +108,7 @@ exports.create = function(req, res) {
     var sectionId = req.body.section;
     var blocked = isTopicBlocked(topicId);
 
-    if (req.user.roles.indexOf('admin') >= 0 || !blocked){
+    if (req.user.roles.indexOf('admin') >= 0 || !blocked) {
         reply.save(function(err) {
             if (err) {
                 return res.status(400).send({
@@ -127,8 +127,8 @@ exports.create = function(req, res) {
                             message: 'failed to load user'
                         });
                     }
-                    for(var i = 0; i < user.ip_address.length; i++){
-                        if (user.ip_address[i] == ip){
+                    for (var i = 0; i < user.ip_address.length; i++) {
+                        if (user.ip_address[i] == ip) {
                             user.ip_address[i] = ip;
                             break;
                         }
@@ -144,26 +144,26 @@ exports.create = function(req, res) {
                     .populate('user', 'username _id')
                     .populate('section', '_id ')
                     .exec(function (err, topic) {
-                    if (err) {
-                        return res.status(400).send({
-                            message: errorHandler.getErrorMessage(err)
-                        });
-                    } else if (!topic) {
-                        return res.status(404).send({
-                            message: 'No Topic with that identifier has been found'
-                        });
-                    }
+                        if (err) {
+                            return res.status(400).send({
+                                message: errorHandler.getErrorMessage(err)
+                            });
+                        } else if (!topic) {
+                            return res.status(404).send({
+                                message: 'No Topic with that identifier has been found'
+                            });
+                        }
 
-                    if (topic.user._id != req.user._id){
-                        createNotification(res, 'New Reply', 'on your topic', icons[icons.length - 1], 'new_reply', topic, topic.user, topic.section._id);
-                    }
+                        if (topic.user._id != req.user._id) {
+                            createNotification(res, 'New Reply', 'on your topic', icons[icons.length - 1], 'new_reply', topic, topic.user, topic.section._id);
+                        }
 
-                    topic.replys += 1 ;
-                    topic.save(function(err) {
+                        topic.replys += 1;
+                        topic.save(function(err) {
+
+                        });
 
                     });
-
-                });
 
                 Section.findById(sectionId).exec(function (err, section) {
                     if (err) {
@@ -175,7 +175,7 @@ exports.create = function(req, res) {
                             message: 'No Section with that identifier has been found'
                         });
                     }
-                    section.replys += 1 ;
+                    section.replys += 1;
                     section.save(function(err) {
 
                     });
@@ -252,8 +252,8 @@ exports.delete = function(req, res) {
                         });
                     }
 
-                    if ((topic.replys - 1) >= -1 ){
-                        topic.replys = topic.replys - 1;
+                    if ((topic.replys - 1) >= -1) {
+                        topic.replys -= 1;
                     }
                     topic.save(function(err) {
 
@@ -270,13 +270,13 @@ exports.delete = function(req, res) {
                             message: 'failed to load user'
                         });
                     }
-                    for(var i = 0; i < user.ip_address.length; i++){
-                        if (user.ip_address[i] == ip){
+                    for (var i = 0; i < user.ip_address.length; i++) {
+                        if (user.ip_address[i] == ip) {
                             user.ip_address[i] = ip;
                             break;
                         }
                     }
-                    user.replys = user.replys - 1;
+                    user.replys -= 1;
                     user.save(function (err) {
                         if (err) {
                             return res.status(400).send({
@@ -307,10 +307,10 @@ exports.list = function(req, res) {
             message: 'Sectionid is invalid'
         });
     }
-    if (req.user.roles.indexOf('admin' >= 0)){
-        Reply.find({'topic': mongoose.Types.ObjectId(id)}).sort('created')
+    if (req.user.roles.indexOf('admin' >= 0)) {
+        Reply.find({ 'topic': mongoose.Types.ObjectId(id) }).sort('created')
             .populate('user', 'username roles replys posts profileImageURL created rank ip_address')
-            .populate('topic','name section')
+            .populate('topic', 'name section')
             .exec(function(err, replys) {
                 if (err) {
                     return res.status(400).send({
@@ -321,9 +321,9 @@ exports.list = function(req, res) {
                 }
             });
     } else {
-        Reply.find({'topic': mongoose.Types.ObjectId(id)}).sort('created')
+        Reply.find({ 'topic': mongoose.Types.ObjectId(id) }).sort('created')
             .populate('user', 'username roles replys posts profileImageURL created rank')
-            .populate('topic','name section')
+            .populate('topic', 'name section')
             .exec(function(err, replys) {
                 if (err) {
                     return res.status(400).send({
@@ -347,10 +347,10 @@ exports.replyByID = function(req, res, next, id) {
         });
     }
 
-    if (req.user.roles.indexOf('admin' >= 0)){
+    if (req.user.roles.indexOf('admin' >= 0)) {
         Reply.findById(id)
             .populate('user', 'username roles replys profileImageURL created rank ip_address')
-            .populate('topic','name ')
+            .populate('topic', 'name ')
             .exec(function (err, reply) {
                 if (err) {
                     return next(err);
@@ -367,7 +367,7 @@ exports.replyByID = function(req, res, next, id) {
     } else {
         Reply.findById(id)
             .populate('user', 'username roles replys profileImageURL created rank')
-            .populate('topic','name ')
+            .populate('topic', 'name ')
             .exec(function (err, reply) {
                 if (err) {
                     return next(err);

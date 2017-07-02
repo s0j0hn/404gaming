@@ -5,7 +5,7 @@
         .module('app.forum')
         .config(routeConfig);
 
-    routeConfig.$inject = ['$stateProvider','RouteHelpersProvider'];
+    routeConfig.$inject = ['$stateProvider', 'RouteHelpersProvider'];
 
     function routeConfig($stateProvider, helper) {
         $stateProvider
@@ -13,7 +13,7 @@
                 abstract: true,
                 url: '/forum',
                 template: '<ui-view/>',
-                data:{
+                data: {
                     roles: ['user', 'team', 'admin']
                 }
             })

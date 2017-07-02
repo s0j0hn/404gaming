@@ -6,9 +6,9 @@
         .module('app.forum')
         .controller('EditReplyController', EditReplyController);
 
-    EditReplyController.$inject = ['$scope','$stateParams', '$state', '$window', 'replyResolve'];
+    EditReplyController.$inject = ['$scope', '$stateParams', '$state', '$window', 'replyResolve'];
 
-    function EditReplyController ($scope, $stateParams, $state, $window, reply){
+    function EditReplyController ($scope, $stateParams, $state, $window, reply) {
         var vm = this;
 
         vm.reply = reply;
@@ -28,7 +28,7 @@
             }
 
             function successCallback(res) {
-                $state.go('app.forum.sections.topics.view',{sectionId: $stateParams, topicId: $stateParams.topicId});
+                $state.go('app.forum.sections.topics.view', { sectionId: $stateParams, topicId: $stateParams.topicId });
             }
 
             function errorCallback(res) {

@@ -23,9 +23,9 @@
         vm.recaptchatResponse = null;
 
         // Get an eventual error defined in the URL query string:
-        //if ($location.search().err) {
-        //Notification.error({ message: $location.search().err });
-        //}
+        // if ($location.search().err) {
+        // Notification.error({ message: $location.search().err });
+        // }
 
         // If user is signed in then redirect back app.articles.list
         if (vm.authentication.user) {
@@ -40,9 +40,9 @@
         function setResponse(response) {
             vm.recaptchatResponse = response;
         }
-        
+
         function cbExpiration() {
-            
+
         }
 
         function signup(isValid) {
@@ -86,28 +86,28 @@
         function onUserSignupSuccess(response) {
             // If successful we assign the response to the global user model
             vm.authentication.user = response;
-            //Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Signup successful!' });
+            // Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Signup successful!' });
             // And redirect to the previous or app.articles.list page
             $state.go($state.previous.state.name || 'app.articles.list', $state.previous.params);
             swal('Success', 'Welcome  ' + response.username, 'success');
         }
 
         function onUserSignupError(response) {
-            //Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Signup Error!', delay: 6000 });
+            // Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Signup Error!', delay: 6000 });
             swal('Error', response.data.message, 'error');
         }
 
         function onUserSigninSuccess(response) {
             // If successful we assign the response to the global user model
             vm.authentication.user = response;
-            //Notification.info({ message: 'Welcome ' + response.firstName });
+            // Notification.info({ message: 'Welcome ' + response.firstName });
             // And redirect to the previous or app.articles.list page
             $state.go($state.previous.state.name || 'app.articles.list', $state.previous.params);
             swal('Success', 'Welcome  ' + response.username, 'success');
         }
 
         function onUserSigninError(response) {
-            //Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Signin Error!', delay: 6000 });
+            // Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Signin Error!', delay: 6000 });
             swal('Error', response.data.message, 'error');
         }
     }

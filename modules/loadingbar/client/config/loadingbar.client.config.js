@@ -6,10 +6,10 @@
         .config(loadingbarConfig)
         ;
     loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider){
-      cfpLoadingBarProvider.includeBar = true;
-      cfpLoadingBarProvider.includeSpinner = false;
-      cfpLoadingBarProvider.latencyThreshold = 400;
-      cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+    function loadingbarConfig(cfpLoadingBarProvider) {
+        cfpLoadingBarProvider.includeBar = true;
+        cfpLoadingBarProvider.includeSpinner = false;
+        cfpLoadingBarProvider.latencyThreshold = 400;
+        cfpLoadingBarProvider.parentSelector = '.wrapper > section';
     }
-})();
+}());

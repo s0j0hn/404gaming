@@ -35,8 +35,8 @@
         }
 
         function onChangePasswordError(response) {
-            //Notification.error({ message: response.data.message, title: '<i class='glyphicon glyphicon-remove'></i> Password change failed!' });
-            swal('Cancelled', 'Edit password failed!'+ response.data.message, 'error');
+            // Notification.error({ message: response.data.message, title: '<i class='glyphicon glyphicon-remove'></i> Password change failed!' });
+            swal('Cancelled', 'Edit password failed!' + response.data.message, 'error');
         }
     }
 }());

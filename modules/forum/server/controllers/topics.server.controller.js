@@ -7,7 +7,7 @@ var ipaddr = require('ipaddr.js');
 var path = require('path'),
     mongoose = require('mongoose'),
     Topic = mongoose.model('Topic'),
-    User = mongoose.model('User') ,
+    User = mongoose.model('User'),
     Section = mongoose.model('Section'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     _ = require('lodash');
@@ -63,13 +63,13 @@ exports.create = function(req, res) {
                         message: 'failed to load user'
                     });
                 }
-                for(var i = 0; i < user.ip_address.length; i++){
-                    if (user.ip_address[i] == ip){
+                for (var i = 0; i < user.ip_address.length; i++) {
+                    if (user.ip_address[i] == ip) {
                         user.ip_address[i] = ip;
                         break;
                     }
                 }
-                user.posts = user.posts + 1;
+                user.posts += 1;
                 user.save(function () {
 
                 });
@@ -87,7 +87,7 @@ exports.create = function(req, res) {
                     });
                 }
                 section.latestPost = topic._id;
-                section.posts = section.posts + 1 ;
+                section.posts += 1;
                 section.save(function(err) {
 
                 });
@@ -135,9 +135,9 @@ exports.update = function(req, res) {
                 }
 
                 section.latestPost = null;
-                if ((section.posts - 1) >= -1 ){
-                    section.posts = section.posts - 1;
-                    section.replys = section.replys - topic.replys;
+                if ((section.posts - 1) >= -1) {
+                    section.posts -= 1;
+                    section.replys -= topic.replys;
                 }
 
                 section.save(function(err) {
@@ -163,8 +163,8 @@ exports.update = function(req, res) {
                             });
                         }
                         section.latestPost = topic._id;
-                        section.posts = section.posts + 1 ;
-                        section.replys = section.replys + topic.replys;
+                        section.posts += 1;
+                        section.replys += topic.replys;
                         section.save(function(err) {
 
                         });
@@ -218,9 +218,9 @@ exports.delete = function(req, res) {
                         });
                     }
                     section.latestPost = null;
-                    if ((section.posts - 1) >= -1 ){
-                        section.posts = section.posts - 1;
-                        section.replys = section.replys - topic.replys;
+                    if ((section.posts - 1) >= -1) {
+                        section.posts -= 1;
+                        section.replys -= topic.replys;
                     }
                     section.save(function(err) {
 
@@ -237,13 +237,13 @@ exports.delete = function(req, res) {
                             message: 'failed to load user'
                         });
                     }
-                    for(var i = 0; i < user.ip_address.length; i++){
-                        if (user.ip_address[i] == ip){
+                    for (var i = 0; i < user.ip_address.length; i++) {
+                        if (user.ip_address[i] == ip) {
                             user.ip_address[i] = ip;
                             break;
                         }
                     }
-                    user.posts = user.posts - 1;
+                    user.posts -= 1;
                     user.save(function (err) {
                         if (err) {
                             return res.status(400).send({
@@ -275,14 +275,14 @@ exports.list = function(req, res) {
         });
     }
     var select = null;
-    if (req.user.roles.indexOf('admin') >= 0){
+    if (req.user.roles.indexOf('admin') >= 0) {
         select = 'username roles posts profileImageURL created rank ip_address';
     } else {
         select = 'username roles posts profileImageURL created rank';
     }
-    Topic.find({'section': mongoose.Types.ObjectId(id)}).sort('-created')
+    Topic.find({ 'section': mongoose.Types.ObjectId(id) }).sort('-created')
         .populate('user', select)
-        .populate('section','name visibility')
+        .populate('section', 'name visibility')
         .exec(function(err, topics) {
             if (err) {
                 return res.status(400).send({
@@ -306,7 +306,7 @@ exports.topicByID = function(req, res, next, id) {
     }
 
     var select = null;
-    if (req.user.roles.indexOf('admin') >= 0){
+    if (req.user.roles.indexOf('admin') >= 0) {
         select = 'username roles posts profileImageURL created rank ip_address';
     } else {
         select = 'username roles posts profileImageURL created rank';
@@ -314,7 +314,7 @@ exports.topicByID = function(req, res, next, id) {
 
     Topic.findById(id)
         .populate('user', select)
-        .populate('section','name visibility')
+        .populate('section', 'name visibility')
         .exec(function (err, topic) {
             if (err) {
                 return next(err);
@@ -324,7 +324,7 @@ exports.topicByID = function(req, res, next, id) {
                 });
             }
             if (req.user.roles.indexOf(topic.section.visibility) >= 0 || req.user.roles.indexOf('admin') >= 0) {
-                if ( topic.user !== null && topic.user._id !== req.user._id){
+                if (topic.user !== null && topic.user._id !== req.user._id) {
                     topic.views += 1;
                     topic.save(function (err) {
                         if (err) {

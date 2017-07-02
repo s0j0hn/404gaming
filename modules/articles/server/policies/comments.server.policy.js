@@ -25,19 +25,19 @@ exports.invokeRolesPolicies = function () {
         roles: ['team'],
         allows: [{
             resources: '/api/comments/:commentId',
-            permissions: ['get','put','delete']
+            permissions: ['get', 'put', 'delete']
         }, {
             resources: '/api/comments',
-            permissions: ['get','post']
+            permissions: ['get', 'post']
         }]
     }, {
         roles: ['user'],
         allows: [{
             resources: '/api/comments/:commentId',
-            permissions: ['get','put','delete']
+            permissions: ['get', 'put', 'delete']
         }, {
             resources: '/api/comments',
-            permissions: ['get','post']
+            permissions: ['get', 'post']
         }]
     }, {
         roles: ['guest'],
@@ -67,15 +67,13 @@ exports.isAllowed = function (req, res, next) {
         if (err) {
             // An authorization error occurred.
             return res.status(500).send('Unexpected authorization error');
-        } else {
-            if (isAllowed) {
+        } else if (isAllowed) {
                 // Access granted! Invoke next middleware
-                return next();
-            } else {
-                return res.status(403).json({
-                    message: 'User is not authorized'
-                });
-            }
+            return next();
+        } else {
+            return res.status(403).json({
+                message: 'User is not authorized'
+            });
         }
     });
 };

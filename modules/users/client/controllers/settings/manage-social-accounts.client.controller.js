@@ -5,7 +5,7 @@
         .module('app.users')
         .controller('SocialAccountsController', SocialAccountsController);
 
-    SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication','Notify'];
+    SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication', 'Notify'];
 
     function SocialAccountsController($state, $window, UsersService, Authentication, Notification) {
         var vm = this;
@@ -29,7 +29,7 @@
 
         // Remove a user social account
         function removeUserSocialAccount(provider) {
-            if ($window.confirm('Are you sure you want to delete this provider?')){
+            if ($window.confirm('Are you sure you want to delete this provider?')) {
                 UsersService.removeSocialAccount(provider)
                     .then(onRemoveSocialAccountSuccess)
                     .catch(onRemoveSocialAccountError);

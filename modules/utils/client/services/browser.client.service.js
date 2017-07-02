@@ -1,4 +1,4 @@
-/**=========================================================
+/** =========================================================
  * Module: browser.js
  * Browser detection
  =========================================================*/
@@ -12,7 +12,7 @@
 
     Browser.$inject = ['$window'];
     function Browser($window) {
-      return $window.jQBrowser;
+        return $window.jQBrowser;
     }
 
-})();
+}());

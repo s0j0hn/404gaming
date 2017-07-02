@@ -5,24 +5,24 @@
         .module('app.sidebar')
         .controller('UserBlockController', UserBlockController);
 
-    UserBlockController.$inject = ['$scope','Authentication'];
+    UserBlockController.$inject = ['$scope', 'Authentication'];
     function UserBlockController($scope, Authentication) {
         $scope.authentication = Authentication;
         activate();
 
-        ////////////////
+        // //////////////
 
         function activate() {
 
-          $scope.userBlockVisible = true;
+            $scope.userBlockVisible = true;
 
-          var detach = $scope.$on('toggleUserBlock', function(/*event, args*/) {
+            var detach = $scope.$on('toggleUserBlock', function(/* event, args*/) {
 
-            $scope.userBlockVisible = ! $scope.userBlockVisible;
+                $scope.userBlockVisible = !$scope.userBlockVisible;
 
-          });
+            });
 
-          $scope.$on('$destroy', detach);
+            $scope.$on('$destroy', detach);
         }
     }
-})();
+}());

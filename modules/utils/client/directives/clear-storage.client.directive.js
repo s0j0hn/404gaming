@@ -1,4 +1,4 @@
-/**=========================================================
+/** =========================================================
  * Module: clear-storage.js
  * Removes a key from the browser storage via element click
  =========================================================*/
@@ -16,24 +16,23 @@
             link: link,
             restrict: 'A',
             scope: {
-              resetKey: '@'
+                resetKey: '@'
             }
         };
         return directive;
 
         function link(scope, element) {
-          element.on('click', function (e) {
-              e.preventDefault();
+            element.on('click', function (e) {
+                e.preventDefault();
 
-              if(scope.resetKey) {
-                delete $localStorage[scope.resetKey];
-                $state.go($state.current, {}, {reload: true});
-              }
-              else {
-                $.error('No storage key specified for reset.');
-              }
-          });
+                if (scope.resetKey) {
+                    delete $localStorage[scope.resetKey];
+                    $state.go($state.current, {}, { reload: true });
+                } else {
+                    $.error('No storage key specified for reset.');
+                }
+            });
         }
     }
 
-})();
+}());

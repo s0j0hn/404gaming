@@ -23,7 +23,7 @@ module.exports = function (app) {
 
     app.route('/api/channels/:channelId/quit').all(channelsPolicy.isAllowed)
         .put(channels.quitChannel);
-    
+
     app.param('channelId', channels.channelByID);
 
 };
