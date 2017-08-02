@@ -82,7 +82,7 @@
     "load-grunt-tasks": "^3.5.2",
     "lodash": "^4.17.4",
     "method-override": "^2.3.9",
-    "mocha": "~3.4.2",
+    "mocha": "~3.5.0",
     "mock-fs": "~4.4.1",
     "mongoose": "~4.11.0",
     "mongoose-encryption": "latest",
