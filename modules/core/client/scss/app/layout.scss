@@ -139,7 +139,7 @@ html, body {
   }
 
   > h3,
-  > .content-heading {
+  .content-heading {
     font-size: $font-size-h3;
     line-height: $headings-line-height;
     color: #929292;
@@ -169,7 +169,7 @@ html, body {
     padding: $content-padding;
     //overflow: auto; // required for portlets
     > h3,
-    > .content-heading {
+    .content-heading {
       margin: -$content-padding;
       margin-bottom: $content-padding;
       padding: $content-padding;

@@ -232,5 +232,5 @@
                         '/lib/angular-ui-calendar/src/calendar.js'],
                     serie: true }
             ]
-        });
+        });ncu
 }());

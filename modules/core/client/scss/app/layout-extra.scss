@@ -143,7 +143,8 @@
       max-width: 1140px;
       margin-left: auto;
       margin-right: auto;
-      > .content-wrapper > h3 {
+      > .content-wrapper > h3,
+      > .content-wrapper .content-heading {
         display: none;
       }
     }
@@ -204,7 +205,7 @@ $float-space: 15px;
     .content-wrapper {
       border: 0;
       > h3,
-      > .content-heading {
+      .content-heading {
         padding-top: 30px;
         border: 0;
         background-color: transparent;
