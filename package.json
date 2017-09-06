@@ -13,7 +13,8 @@
     "prepublish": "npm run snyk-protect",
     "snyk-protect": "snyk protect",
     "start": "gulp",
-    "test": "snyk test && gulp test"
+    "test": "snyk test && gulp test",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "acl": "~0.4.10",
@@ -100,7 +101,7 @@
     "run-sequence": "^2.1.0",
     "serve-favicon": "^2.4.3",
     "should": "^11.2.1",
-    "snyk": "^1.38.1",
+    "snyk": "^1.38.2",
     "socket.io": "^2.0.3",
     "socket.io-emitter": "^3.1.0",
     "socket.io-redis": "^5.1.0",

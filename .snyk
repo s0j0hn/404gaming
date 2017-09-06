@@ -96,3 +96,6 @@ patch:
   'npm:uglify-js:20151024':
     - swig > uglify-js:
         patched: '2017-04-05T11:12:39.693Z'
+  'npm:ms:20170412':
+    - karma-phantomjs-launcher > phantomjs-prebuilt > extract-zip > debug > ms:
+        patched: '2017-08-16T04:00:22.429Z'
