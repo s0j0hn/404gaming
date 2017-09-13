@@ -19,8 +19,22 @@ module.exports = {
             SecretKey: 'PdU2vusedclOAV8rQr/tsiUgrIsh6KhWHU9pi9Xa12g='
         }
     },
+    db: {
+        promise: global.Promise
+    },
+    // DOMAIN config should be set to the fully qualified application accessible
+    // URL. For example: https://www.myapp.com (including port if required).
+    domain: process.env.DOMAIN,
     port: process.env.PORT || 3000,
+    host: process.env.HOST || '0.0.0.0',
     templateEngine: 'swig',
+    csrf: {
+        csrf: false,
+        csp: false,
+        xframe: 'SAMEORIGIN',
+        p3p: 'ABCDEF',
+        xssProtection: true
+    },
     // Session Cookie settings
     sessionCookie: {
         // session expiration is set by default to 48 hours

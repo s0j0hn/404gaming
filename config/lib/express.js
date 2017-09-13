@@ -3,249 +3,266 @@
 /**
  * Module dependencies.
  */
-const config = require('../config'), express = require('express'), morgan = require('morgan'), logger = require('./logger'), bodyParser = require('body-parser'), session = require('express-session'), MongoStore = require('connect-mongo')(session), favicon = require('serve-favicon'), compress = require('compression'), methodOverride = require('method-override'), cookieParser = require('cookie-parser'), helmet = require('helmet'), flash = require('connect-flash'), consolidate = require('consolidate'), path = require('path');
+var config = require('../config'),
+    express = require('express'),
+    morgan = require('morgan'),
+    logger = require('./logger'),
+    bodyParser = require('body-parser'),
+    session = require('express-session'),
+    MongoStore = require('connect-mongo')(session),
+    favicon = require('serve-favicon'),
+    compress = require('compression'),
+    methodOverride = require('method-override'),
+    cookieParser = require('cookie-parser'),
+    helmet = require('helmet'),
+    flash = require('connect-flash'),
+    hbs = require('express-hbs'),
+    consolidate = require('consolidate'),
+    path = require('path'),
+    _ = require('lodash'),
+    lusca = require('lusca');
+
 
 /**
  * Initialize local variables
  */
-module.exports.initLocalVariables = app => {
-  // Setting application local variables
-  app.locals.title = config.app.AppTitle;
-  app.locals.description = config.app.AppDescription;
-  if (config.secure && config.secure.ssl === true) {
-    app.locals.secure = config.secure.ssl;
-  }
-  app.locals.keywords = config.app.keywords;
-  app.locals.googleAnalyticsTrackingID = config.app.googleAnalyticsTrackingID;
-  app.locals.facebookAppId = config.facebook.clientID;
-  app.locals.jsFiles = config.files.client.js;
-  app.locals.cssFiles = config.files.client.css;
-  app.locals.livereload = config.livereload;
-  app.locals.logo = config.logo;
-  app.locals.favicon = config.favicon;
+module.exports.initLocalVariables = function (app) {
+    // Setting application local variables
+    app.locals.title = config.app.title;
+    app.locals.description = config.app.description;
+    if (config.secure && config.secure.ssl === true) {
+        app.locals.secure = config.secure.ssl;
+    }
+    app.locals.keywords = config.app.keywords;
+    app.locals.googleAnalyticsTrackingID = config.app.googleAnalyticsTrackingID;
+    app.locals.facebookAppId = config.facebook.clientID;
+    app.locals.twitterUsername = config.twitter.username;
+    app.locals.jsFiles = config.files.client.js;
+    app.locals.cssFiles = config.files.client.css;
+    app.locals.livereload = config.livereload;
+    app.locals.logo = config.logo;
+    app.locals.favicon = config.favicon;
+    app.locals.env = process.env.NODE_ENV;
+    app.locals.domain = config.domain;
 
-  // Passing the request url to environment locals
-  app.use((req, res, next) => {
-    res.locals.host = req.protocol + '://' + req.hostname;
-    res.locals.url = req.protocol + '://' + req.headers.host + req.originalUrl;
-    next();
-  });
+    // Passing the request url to environment locals
+    app.use(function (req, res, next) {
+        res.locals.host = req.protocol + '://' + req.hostname;
+        res.locals.url = req.protocol + '://' + req.headers.host + req.originalUrl;
+        next();
+    });
 };
 
 /**
  * Initialize application middleware
  */
 module.exports.initMiddleware = app => {
-  // Showing stack errors
-  app.set('showStackError', true);
+    // Should be placed before express.static
+    app.use(compress({
+        filter: function (req, res) {
+            return (/json|text|javascript|css|font|svg/).test(res.getHeader('Content-Type'));
+        },
+        level: 9
+    }));
 
-  // Enable jsonp
-  app.enable('jsonp callback');
+    // Initialize favicon middleware
+    app.use(favicon(app.locals.favicon));
 
-  // Should be placed before express.static
-  app.use(compress({
-    filter: function (req, res) {
-      return (/json|text|javascript|css|font|svg/).test(res.getHeader('Content-Type'));
-    },
-    level: 9
-  }));
+    // Enable logger (morgan) if enabled in the configuration file
+    if (_.has(config, 'log.format')) {
+        app.use(morgan(logger.getLogFormat(), logger.getMorganOptions()));
+    }
 
-  // Initialize favicon middleware
-  app.use(favicon(app.locals.favicon));
+    // Environment dependent middleware
+    if (process.env.NODE_ENV === 'development') {
+        // Disable views cache
+        app.set('view cache', false);
+    } else if (process.env.NODE_ENV === 'production') {
+        app.locals.cache = 'memory';
+    }
 
-  // Enable logger (morgan)
-  app.use(morgan(logger.getFormat(), logger.getOptions()));
+    // Request body parsing middleware should be above methodOverride
+    app.use(bodyParser.urlencoded({
+        extended: true
+    }));
+    app.use(bodyParser.json());
+    app.use(methodOverride());
 
-  // Environment dependent middleware
-  if (process.env.NODE_ENV === 'development') {
-    // Disable views cache
-    app.set('view cache', false);
-  } else if (process.env.NODE_ENV === 'production') {
-    app.locals.cache = 'memory';
-  }
-
-  // Request body parsing middleware should be above methodOverride
-  app.use(bodyParser.urlencoded({
-    extended: true
-  }));
-  app.use(bodyParser.json());
-  app.use(methodOverride());
-
-  // Add the cookie parser and flash middleware
-  app.use(cookieParser());
-  app.use(flash());
+    // Add the cookie parser and flash middleware
+    app.use(cookieParser());
+    app.use(flash());
 };
 
 /**
  * Configure view engine
  */
 module.exports.initViewEngine = app => {
-  // Set swig as the template engine
-  app.engine('server.view.html', consolidate[config.templateEngine]);
+    // Set swig as the template engine
+    app.engine('server.view.html', consolidate[config.templateEngine]);
 
-  // Set views path and view engine
-  app.set('view engine', 'server.view.html');
-  app.set('views', './');
+    // Set views path and view engine
+    app.set('view engine', 'server.view.html');
+    app.set('views', './');
 };
 
 /**
  * Configure Express session
  */
 module.exports.initSession = (app, db) => {
-  // Express MongoDB session storage
-  app.use(session({
-    saveUninitialized: true,
-    resave: true,
-    secret: config.sessionSecret,
-    cookie: {
-      maxAge: config.sessionCookie.maxAge,
-      httpOnly: config.sessionCookie.httpOnly,
-      secure: config.sessionCookie.secure && config.secure.ssl
-    },
-    key: config.sessionKey,
-    store: new MongoStore({
-      mongooseConnection: db.connection,
-      collection: config.sessionCollection
-    })
-  }));
+    // Express MongoDB session storage
+    app.use(session({
+        saveUninitialized: true,
+        resave: true,
+        secret: config.sessionSecret,
+        cookie: {
+            maxAge: config.sessionCookie.maxAge,
+            httpOnly: config.sessionCookie.httpOnly,
+            secure: config.sessionCookie.secure && config.secure.ssl
+        },
+        name: config.sessionKey,
+        store: new MongoStore({
+            db: db,
+            collection: config.sessionCollection
+        })
+    }));
+
+    // Add Lusca CSRF Middleware
+    app.use(lusca(config.csrf));
 };
 
 /**
  * Invoke modules server configuration
  */
-module.exports.initModulesConfiguration = (app, db) => {
-  config.files.server.configs.forEach(configPath => {
-    require(path.resolve(configPath))(app, db);
-  });
+module.exports.initModulesConfiguration = (app) => {
+    config.files.server.configs.forEach(function (configPath) {
+        require(path.resolve(configPath))(app);
+    });
 };
 
 /**
  * Configure Helmet headers configuration
  */
 module.exports.initHelmetHeaders = app => {
+    // app.use(helmet.hpkp({
+    //   maxAge: ninetyDaysInSeconds,
+    //     sha256s: [config.app.httpsPin.pin1, config.app.httpsPin.pin2]
+    //   }));
+    // six months expiration period specified in seconds
+    var SIX_MONTHS = 15778476;
 
-  // Use helmet to secure Express headers
-  const SIX_MONTHS = 15778476000;
-  const ninetyDaysInSeconds = 7776000;
-  // app.use(helmet.hpkp({
-  //   maxAge: ninetyDaysInSeconds,
-  //     sha256s: [config.app.httpsPin.pin1, config.app.httpsPin.pin2]
-  //   }));
-  app.use(helmet.dnsPrefetchControl());
-  app.use(helmet.frameguard());
-  //app.use(helmet.noCache());
-  app.use(helmet.xssFilter());
-  //app.use(helmet.noSniff());
-  app.use(helmet.ieNoOpen());
-  app.use(helmet.hsts({
-    maxAge: SIX_MONTHS,
-    includeSubdomains: true,
-    force: true
-  }));
-  app.disable('x-powered-by');
+    app.use(helmet.frameguard());
+    app.use(helmet.xssFilter());
+    app.use(helmet.noSniff());
+    app.use(helmet.ieNoOpen());
+    app.use(helmet.hsts({
+        maxAge: SIX_MONTHS,
+        includeSubdomains: true,
+        force: true
+    }));
+    app.disable('x-powered-by');
 };
 
 /**
  * Configure the modules static routes
  */
 module.exports.initModulesClientRoutes = app => {
-  // Setting the app router and static folder
-  app.use('/', express.static(path.resolve('./public')));
+    // Setting the app router and static folder
+    app.use('/', express.static(path.resolve('./public'), { maxAge: 86400000 }));
 
-  // Globbing static routing
-  config.folders.client.forEach(staticPath => {
-    app.use(staticPath, express.static(path.resolve('./' + staticPath)));
-  });
+    // Globbing static routing
+    config.folders.client.forEach(function (staticPath) {
+        app.use(staticPath, express.static(path.resolve('./' + staticPath)));
+    });
 };
 
 /**
  * Configure the modules ACL policies
  */
 module.exports.initModulesServerPolicies = app => {
-  // Globbing policy files
-  config.files.server.policies.forEach(policyPath => {
-    require(path.resolve(policyPath)).invokeRolesPolicies();
-  });
+    // Globbing policy files
+    config.files.server.policies.forEach(function (policyPath) {
+        require(path.resolve(policyPath)).invokeRolesPolicies();
+    });
 };
 
 /**
  * Configure the modules server routes
  */
 module.exports.initModulesServerRoutes = app => {
-  // Globbing routing files
-  config.files.server.routes.forEach(routePath => {
-    require(path.resolve(routePath))(app);
-  });
+    // Globbing routing files
+    config.files.server.routes.forEach(function (routePath) {
+        require(path.resolve(routePath))(app);
+    });
 };
 
 /**
  * Configure error handling
  */
 module.exports.initErrorRoutes = app => {
-  app.use((err, req, res, next) => {
-    // If the error object doesn't exists
-    if (!err) {
-      return next();
-    }
+    app.use((err, req, res, next) => {
+        // If the error object doesn't exists
+        if (!err) {
+            return next();
+        }
 
-    // Log it
-    console.error(err.stack);
+        // Log it
+        console.error(err.stack);
 
-    // Redirect to error page
-    res.redirect('/server-error');
-  });
+        // Redirect to error page
+        res.redirect('/server-error');
+    });
 };
 
 /**
  * Configure Socket.io
  */
-module.exports.configureSocketIO = (app, db) => {
-  // Load the Socket.io configuration
-  const server = require('./socket.io')(app, db);
+module.exports.configureSocketIO = function (app, db) {
+    // Load the Socket.io configuration
+    var server = require('./socket.io')(app, db);
 
-  // Return server object
-  return server;
+    // Return server object
+    return server;
 };
 
 /**
  * Initialize the Express application
  */
 module.exports.init = function (db) {
-  // Initialize express app
-  let app = express();
+    // Initialize express app
+    let app = express();
 
-  // Initialize local variables
-  this.initLocalVariables(app);
+    // Initialize local variables
+    this.initLocalVariables(app);
 
-  // Initialize Express middleware
-  this.initMiddleware(app);
+    // Initialize Express middleware
+    this.initMiddleware(app);
 
-  // Initialize Express view engine
-  this.initViewEngine(app);
+    // Initialize Express view engine
+    this.initViewEngine(app);
 
-  // Initialize Express session
-  this.initSession(app, db);
+    // Initialize Express session
+    this.initSession(app, db);
 
-  // Initialize Modules configuration
-  this.initModulesConfiguration(app);
+    // Initialize Modules configuration
+    this.initModulesConfiguration(app);
 
-  // Initialize Helmet security headers
-  this.initHelmetHeaders(app);
+    // Initialize Helmet security headers
+    this.initHelmetHeaders(app);
 
-  // Initialize modules static client routes
-  this.initModulesClientRoutes(app);
+    // Initialize modules static client routes
+    this.initModulesClientRoutes(app);
 
-  // Initialize modules server authorization policies
-  this.initModulesServerPolicies(app);
+    // Initialize modules server authorization policies
+    this.initModulesServerPolicies(app);
 
-  // Initialize modules server routes
-  this.initModulesServerRoutes(app);
+    // Initialize modules server routes
+    this.initModulesServerRoutes(app);
 
-  // Initialize error routes
-  this.initErrorRoutes(app);
+    // Initialize error routes
+    this.initErrorRoutes(app);
 
-  // Configure Socket.io
-  app = this.configureSocketIO(app, db);
+    // Configure Socket.io
+    app = this.configureSocketIO(app, db);
 
-  return app;
+    return app;
 };

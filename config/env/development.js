@@ -1,14 +1,11 @@
 'use strict';
 
-const defaultEnvConfig = require('./default');
+var defaultEnvConfig = require('./default');
 
 module.exports = {
     db: {
-        uri: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean-dev',
-        options: {
-            user: '',
-            pass: ''
-        },
+        uri: process.env.MONGOHQ_URL || process.env.MONGODB_URI || 'mongodb://' + (process.env.DB_1_PORT_27017_TCP_ADDR || 'localhost') + '/mean-dev',
+        options: {},
         // Enable mongoose debug mode
         debug: process.env.MONGODB_DEBUG || false
     },
@@ -16,19 +13,12 @@ module.exports = {
         // logging with Morgan - https://github.com/expressjs/morgan
         // Can specify one of 'combined', 'common', 'dev', 'short', 'tiny'
         format: 'dev',
-        options: {
-            // Stream defaults to process.stdout
-            // Uncomment/comment to toggle the logging to a log on the file system
-            //stream: {
-            //  directoryPath: process.cwd(),
-            //  fileName: 'access.log',
-            //  rotatingLogs: { // for more info on rotating logs - https://github.com/holidayextras/file-stream-rotator#usage
-            //    active: false, // activate to use rotating logs
-            //    fileName: 'access-%DATE%.log', // if rotating logs are active, this fileName setting will be used
-            //    frequency: 'daily',
-            //    verbose: false
-            //  }
-            //}
+        fileLogger: {
+            directoryPath: process.cwd(),
+            fileName: 'app.log',
+            maxsize: 10485760,
+            maxFiles: 2,
+            json: false
         }
     },
     app: {
@@ -40,6 +30,7 @@ module.exports = {
         callbackURL: '/api/auth/facebook/callback'
     },
     twitter: {
+        username: '@TWITTER_USERNAME',
         clientID: process.env.TWITTER_KEY || 'CONSUMER_KEY',
         clientSecret: process.env.TWITTER_SECRET || 'CONSUMER_SECRET',
         callbackURL: '/api/auth/twitter/callback'
@@ -59,11 +50,6 @@ module.exports = {
         clientSecret: process.env.GITHUB_SECRET || 'APP_SECRET',
         callbackURL: '/api/auth/github/callback'
     },
-    stripe: {
-        clientID: process.env.STRIPE_ID || '123132123',
-        clientSecret: process.env.STRIPE_SECRET || '1212',
-        callbackURL: '/api/auth/stripe/callback'
-    },
     paypal: {
         clientID: process.env.PAYPAL_ID || 'CLIENT_ID',
         clientSecret: process.env.PAYPAL_SECRET || 'CLIENT_SECRET',
@@ -80,48 +66,57 @@ module.exports = {
             }
         }
     },
-    livereload: false,
+    livereload: true,
     seedDB: {
-        seed: process.env.MONGO_SEED === 'true' ? true : false,
+        seed: process.env.MONGO_SEED === 'true',
         options: {
-            logResults: process.env.MONGO_SEED_LOG_RESULTS === 'false' ? false : true,
-            seedUser: {
-                username: process.env.MONGO_SEED_USER_USERNAME || 'user',
-                provider: 'local',
-                email: process.env.MONGO_SEED_USER_EMAIL || 'user@localhost.com',
-                firstName: 'User',
-                lastName: 'Local',
-                displayName: 'User Local',
-                roles: ['user']
-            },
-            seedAdmin: {
-                username: process.env.MONGO_SEED_ADMIN_USERNAME || 'admin',
-                provider: 'local',
-                email: process.env.MONGO_SEED_ADMIN_EMAIL || 'admin@localhost.com',
-                firstName: 'Admin',
-                lastName: 'Local',
-                displayName: 'Admin Local',
-                roles: ['user', 'admin']
-            }
-        }
-    },
-    uploads: {
-        profile: {
-            image: {
-                dest: './modules/users/client/img/profile/uploads/',
-                limits: {
-                    fileSize: 2 * 1024 * 1024 // Max file size in bytes (2 MB)
+            logResults: process.env.MONGO_SEED_LOG_RESULTS !== 'false'
+        },
+        // Order of collections in configuration will determine order of seeding.
+        // i.e. given these settings, the User seeds will be complete before
+        // Article seed is performed.
+        collections: [{
+            model: 'User',
+            docs: [{
+                data: {
+                    username: 'local-admin',
+                    email: 'admin@localhost.com',
+                    firstName: 'Admin',
+                    lastName: 'Local',
+                    roles: ['admin', 'user']
                 }
-            }
-        }
-    },
-    shared: {
-        owasp: {
-            allowPassphrases: true,
-            maxLength: 128,
-            minLength: 7,
-            minPhraseLength: 20,
-            minOptionalTestsToPass: 3
-        }
+            }, {
+                // Set to true to overwrite this document
+                // when it already exists in the collection.
+                // If set to false, or missing, the seed operation
+                // will skip this document to avoid overwriting it.
+                overwrite: true,
+                data: {
+                    username: 'local-user',
+                    email: 'user@localhost.com',
+                    firstName: 'User',
+                    lastName: 'Local',
+                    roles: ['user']
+                }
+            }]
+        }, {
+            model: 'Article',
+            options: {
+                // Override log results setting at the
+                // collection level.
+                logResults: true
+            },
+            skip: {
+                // Skip collection when this query returns results.
+                // e.g. {}: Only seeds collection when it is empty.
+                when: {} // Mongoose qualified query
+            },
+            docs: [{
+                data: {
+                    title: 'First Article',
+                    content: 'This is a seeded Article for the development environment'
+                }
+            }]
+        }]
     }
 };

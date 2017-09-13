@@ -47,6 +47,7 @@ exports.signup = function (req, res) {
     var ip = getIP(req);
     var banned = false;
 
+
     Ban.find().sort('created').exec(function(err, bans) {
         for (var i = 0; i < bans.length; i++) {
             // var ban = bans[i];
