@@ -1,112 +1,21 @@
-<!--<section>-->
-<!--<div class="page-header">-->
-<!--<div class="row">-->
-<!--<div class="col-md-4">-->
-<!--<h1>Users</h1>-->
-<!--</div>-->
-<!--<div class="col-md-4" style="margin-top: 2em">-->
-<!--<input class="form-control col-md-4" type="text" ng-model="vm.search" placeholder="Search" ng-change="vm.figureOutItemsToDisplay()" />-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-<!--<div class="list-group">-->
-<!--<a ng-repeat="user in vm.pagedItems" ui-sref="app.admin.user({userId: user._id})" class="list-group-item">-->
-<!--<h4 class="list-group-item-heading" ng-bind="user.username"></h4>-->
-<!--<p class="list-group-item-text pull-right small" ng-bind="user.roles"></p>-->
-<!--<p class="list-group-item-text" ng-bind="user.email"></p>-->
-<!--<button class="btn btn-danger" ng-click="vm.banUser(user)">BAN</button>-->
-<!--</a>-->
-<!--</div>-->
-
-<!--<div uib-pagination boundary-links="true" max-size="8"
-items-per-page="vm.itemsPerPage" total-items="vm.filterLength" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></div>-->
-<!--</section>-->
-<div class="panel panel-default">
-  <!--<div class="panel-heading">Users in Database</div>-->
-  <!-- START table-responsive-->
-  <div class="panel-body">
-    <div class="table-responsive">
-      <table datatable="ng" dt-options="vm.dtOptions" dt-column-defs="vm.dtColumnDefs" id="table-ext-1" class="table table-bordered table-hover">
-        <thead>
-        <tr>
-          <!--<th class="text-center">ID</th>-->
-          <th class="text-center">Username</th>
-          <th class="text-center">Picture</th>
-          <th class="text-center">Name</th>
-          <th class="text-center">Email</th>
-          <th class="text-center">Warnings</th>
-          <th class="text-center">Roles</th>
-          <th class="text-center">Created</th>
-          <th class="text-center">Action</th>
-          <th check-all="check-all">
-            <div class="checkbox c-checkbox">
-              <label>
-                <input type="checkbox" />
-                <span class="fa fa-check"></span>
-              </label>
-            </div>
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="user in vm.users">
-          <!--<td>{{user._id}}</td>-->
-          <td class="text-center">{{user.username}}</td>
-          <td ><div class="media">
-            <img src="{{user.profileImageURL}}" alt="Image" class="img-responsive img-circle" />
-          </div></td>
-          <td>{{user.displayName}}</td>
-          <td>{{user.email}}</td>
-          <td>
-            <div data-label="{{user.warnings}}" class="radial-bar radial-bar-0 radial-bar-xs"></div>
-          </td>
-          <td>
-            <p class="inline" ng-repeat="role in user.roles">{{role}} {{$last ? '' : ','}}</p>
-          </td>
-          <td>{{user.created | date: 'HH:mm dd/MM/yy'}}</td>
-          <td>
-            <button class="btn btn-sm btn-danger" ng-click="vm.banUser(user)">BAN</button>
-            <button class="btn btn-sm btn-primary" ui-sref="app.admin.user-edit({userId: user._id})">
-              EDIT
-            </button>
-          </td>
-          <td>
-            <div class="checkbox c-checkbox">
-              <label>
-                <input type="checkbox" />
-                <span class="fa fa-check"></span>
-              </label>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="panel-footer">
+<section>
+  <div class="page-header">
     <div class="row">
-      <div class="col-lg-2">
-        <div class="input-group">
-          <!--<input type="text" placeholder="Search" class="input-sm form-control" ng-model="vm.search" ng-change="vm.figureOutItemsToDisplay()" />-->
-          <!--<span class="input-group-btn">-->
-                  <!--<button type="button" class="btn btn-sm btn-default">Search</button>-->
-          <!--</span>-->
-        </div>
+      <div class="col-md-4">
+        <h1>Users</h1>
       </div>
-      <div class="col-lg-8"></div>
-      <div class="col-lg-2">
-        <div class="input-group pull-right">
-          <select class="input-sm form-control">
-            <option value="0">Ban</option>
-            <option value="1">Delete</option>
-          </select>
-          <span class="input-group-btn">
-                  <button class="btn btn-sm btn-default">Apply</button>
-               </span>
-        </div>
+      <div class="col-md-4" style="margin-top: 2em">
+        <input class="form-control col-md-4" type="text" ng-model="vm.search" placeholder="Search" ng-change="vm.figureOutItemsToDisplay()" />
       </div>
     </div>
   </div>
-  <!--<div uib-pagination boundary-links="true" max-size="8" items-per-page="vm.itemsPerPage" total-items="vm.filterLength" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></div>-->
-</div>
+  <div class="list-group">
+    <a ng-repeat="user in vm.pagedItems" ui-sref="app.admin.user({userId: user._id})" class="list-group-item">
+      <h4 class="list-group-item-heading" ng-bind="user.username"></h4>
+      <p class="list-group-item-text pull-right small" ng-bind="user.roles"></p>
+      <p class="list-group-item-text" ng-bind="user.email"></p>
+    </a>
+  </div>
+
+  <uib-pagination boundary-links="true" max-size="8" items-per-page="vm.itemsPerPage" total-items="vm.filterLength" ng-model="vm.currentPage" ng-change="vm.pageChanged()"></uib-pagination>
+</section>

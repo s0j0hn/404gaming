@@ -1,6 +1,6 @@
-{% extends 'layout.server.view.html' %}
+{{!< layout}}
 
-{% block content %}
-  <div data-preloader></div>
-  <div data-ui-view class="wrapper"></div>
-{% endblock %}
+{{#contentFor 'content'}}
+<div data-preloader></div>
+<div data-ui-view class="wrapper"></div>
+{{/contentFor}}

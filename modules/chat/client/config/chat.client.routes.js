@@ -1,15 +1,22 @@
-'use strict';
+(function () {
+  'use strict';
 
-// Configure the 'app.chat' module routes
-angular.module('app.chat').config(['$stateProvider',
-    function ($stateProvider) {
-        $stateProvider
+  angular
+    .module('chat.routes')
+    .config(routeConfig);
+
+  routeConfig.$inject = ['$stateProvider'];
+
+  function routeConfig($stateProvider) {
+    $stateProvider
       .state('app.chat', {
-          url: '/chat',
-          templateUrl: 'modules/chat/client/views/chat.client.view.html',
-          data: {
-              roles: ['user', 'team', 'admin']
-          }
+        url: '/chat',
+        templateUrl: '/modules/chat/client/views/chat.client.view.html',
+        controller: 'ChatController',
+        controllerAs: 'vm',
+        data: {
+          roles: ['user', 'admin']
+        }
       });
-    }
-]);
+  }
+}());

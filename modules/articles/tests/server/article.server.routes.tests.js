@@ -1,325 +1,420 @@
 'use strict';
 
 var should = require('should'),
-    request = require('supertest'),
-    path = require('path'),
-    mongoose = require('mongoose'),
-    User = mongoose.model('User'),
-    Article = mongoose.model('Article'),
-    express = require(path.resolve('./config/lib/express'));
+  request = require('supertest'),
+  path = require('path'),
+  mongoose = require('mongoose'),
+  User = mongoose.model('User'),
+  Article = mongoose.model('Article'),
+  express = require(path.resolve('./config/lib/express'));
 
 /**
  * Globals
  */
 var app,
-    agent,
-    credentials,
-    user,
-    article;
+  agent,
+  credentials,
+  user,
+  article;
 
 /**
  * Article routes tests
  */
 describe('Article CRUD tests', function () {
 
-    before(function (done) {
-        // Get application
-        app = express.init(mongoose);
-        agent = request.agent(app);
+  before(function (done) {
+    // Get application
+    app = express.init(mongoose.connection.db);
+    agent = request.agent(app);
 
-        done();
+    done();
+  });
+
+  beforeEach(function (done) {
+    // Create user credentials
+    credentials = {
+      usernameOrEmail: 'username',
+      password: 'M3@n.jsI$Aw3$0m3'
+    };
+
+    // Create a new user
+    user = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'test@test.com',
+      username: credentials.usernameOrEmail,
+      password: credentials.password,
+      provider: 'local'
     });
 
-    beforeEach(function (done) {
-        // Create user credentials
-        credentials = {
-            username: 'username',
-            password: 'M3@n.jsI$Aw3$0m3'
+    // Save a user to the test db and create new article
+    user.save()
+      .then(function () {
+        article = {
+          title: 'Article Title',
+          content: 'Article Content'
         };
 
-        // Create a new user
-        user = new User({
-            firstName: 'Full',
-            lastName: 'Name',
-            displayName: 'Full Name',
-            email: 'test@test.com',
-            username: credentials.username,
-            password: credentials.password,
-            provider: 'local'
-        });
+        done();
+      })
+      .catch(done);
+  });
 
-        // Save a user to the test db and create new article
-        user.save(function () {
-            article = {
-                title: 'Article Title',
-                content: 'Article Content'
-            };
+  it('should not be able to save an article if logged in without the "admin" role', function (done) {
+    agent.post('/api/auth/signin')
+      .send(credentials)
+      .expect(200)
+      .end(function (signinErr, signinRes) {
+        // Handle signin error
+        if (signinErr) {
+          return done(signinErr);
+        }
 
-            done();
-        });
-    });
-
-    it('should be able to save an article if logged in', function (done) {
-        agent.post('/api/auth/signin')
-            .send(credentials)
-            .expect(200)
-            .end(function (signinErr, signinRes) {
-                // Handle signin error
-                if (signinErr) {
-                    return done(signinErr);
-                }
-
-                // Get the userId
-                var userId = user.id;
-
-                // Save a new article
-                agent.post('/api/articles')
-                    .send(article)
-                    .expect(200)
-                    .end(function (articleSaveErr, articleSaveRes) {
-                        // Handle article save error
-                        if (articleSaveErr) {
-                            return done(articleSaveErr);
-                        }
-
-                        // Get a list of articles
-                        agent.get('/api/articles')
-                            .end(function (articlesGetErr, articlesGetRes) {
-                                // Handle article save error
-                                if (articlesGetErr) {
-                                    return done(articlesGetErr);
-                                }
-
-                                // Get articles list
-                                var articles = articlesGetRes.body;
-
-                                // Set assertions
-                                (articles[0].user._id).should.equal(userId);
-                                (articles[0].title).should.match('Article Title');
-
-                                // Call the assertion callback
-                                done();
-                            });
-                    });
-            });
-    });
-
-    it('should not be able to save an article if not logged in', function (done) {
         agent.post('/api/articles')
+          .send(article)
+          .expect(403)
+          .end(function (articleSaveErr, articleSaveRes) {
+            // Call the assertion callback
+            done(articleSaveErr);
+          });
+
+      });
+  });
+
+  it('should not be able to save an article if not logged in', function (done) {
+    agent.post('/api/articles')
+      .send(article)
+      .expect(403)
+      .end(function (articleSaveErr, articleSaveRes) {
+        // Call the assertion callback
+        done(articleSaveErr);
+      });
+  });
+
+  it('should not be able to update an article if signed in without the "admin" role', function (done) {
+    agent.post('/api/auth/signin')
+      .send(credentials)
+      .expect(200)
+      .end(function (signinErr, signinRes) {
+        // Handle signin error
+        if (signinErr) {
+          return done(signinErr);
+        }
+
+        agent.post('/api/articles')
+          .send(article)
+          .expect(403)
+          .end(function (articleSaveErr, articleSaveRes) {
+            // Call the assertion callback
+            done(articleSaveErr);
+          });
+      });
+  });
+
+  it('should be able to get a list of articles if not signed in', function (done) {
+    // Create new article model instance
+    var articleObj = new Article(article);
+
+    // Save the article
+    articleObj.save(function () {
+      // Request articles
+      agent.get('/api/articles')
+        .end(function (req, res) {
+          // Set assertion
+          res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+
+          // Call the assertion callback
+          done();
+        });
+
+    });
+  });
+
+  it('should be able to get a single article if not signed in', function (done) {
+    // Create new article model instance
+    var articleObj = new Article(article);
+
+    // Save the article
+    articleObj.save(function () {
+      agent.get('/api/articles/' + articleObj._id)
+        .end(function (req, res) {
+          // Set assertion
+          res.body.should.be.instanceof(Object).and.have.property('title', article.title);
+
+          // Call the assertion callback
+          done();
+        });
+    });
+  });
+
+  it('should return proper error for single article with an invalid Id, if not signed in', function (done) {
+    // test is not a valid mongoose Id
+    agent.get('/api/articles/test')
+      .end(function (req, res) {
+        // Set assertion
+        res.body.should.be.instanceof(Object).and.have.property('message', 'Article is invalid');
+
+        // Call the assertion callback
+        done();
+      });
+  });
+
+  it('should return proper error for single article which doesnt exist, if not signed in', function (done) {
+    // This is a valid mongoose Id but a non-existent article
+    agent.get('/api/articles/559e9cd815f80b4c256a8f41')
+      .end(function (req, res) {
+        // Set assertion
+        res.body.should.be.instanceof(Object).and.have.property('message', 'No article with that identifier has been found');
+
+        // Call the assertion callback
+        done();
+      });
+  });
+
+  it('should not be able to delete an article if signed in without the "admin" role', function (done) {
+    agent.post('/api/auth/signin')
+      .send(credentials)
+      .expect(200)
+      .end(function (signinErr, signinRes) {
+        // Handle signin error
+        if (signinErr) {
+          return done(signinErr);
+        }
+
+        agent.post('/api/articles')
+          .send(article)
+          .expect(403)
+          .end(function (articleSaveErr, articleSaveRes) {
+            // Call the assertion callback
+            done(articleSaveErr);
+          });
+      });
+  });
+
+  it('should not be able to delete an article if not signed in', function (done) {
+    // Set article user
+    article.user = user;
+
+    // Create new article model instance
+    var articleObj = new Article(article);
+
+    // Save the article
+    articleObj.save(function () {
+      // Try deleting article
+      agent.delete('/api/articles/' + articleObj._id)
+        .expect(403)
+        .end(function (articleDeleteErr, articleDeleteRes) {
+          // Set message assertion
+          (articleDeleteRes.body.message).should.match('User is not authorized');
+
+          // Handle article error error
+          done(articleDeleteErr);
+        });
+
+    });
+  });
+
+  it('should be able to get a single article that has an orphaned user reference', function (done) {
+    // Create orphan user creds
+    var _creds = {
+      usernameOrEmail: 'orphan',
+      password: 'M3@n.jsI$Aw3$0m3'
+    };
+
+    // Create orphan user
+    var _orphan = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'orphan@test.com',
+      username: _creds.usernameOrEmail,
+      password: _creds.password,
+      provider: 'local',
+      roles: ['admin']
+    });
+
+    _orphan.save(function (err, orphan) {
+      // Handle save error
+      if (err) {
+        return done(err);
+      }
+
+      agent.post('/api/auth/signin')
+        .send(_creds)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+
+          // Get the userId
+          var orphanId = orphan._id;
+
+          // Save a new article
+          agent.post('/api/articles')
             .send(article)
-            .expect(403)
+            .expect(200)
             .end(function (articleSaveErr, articleSaveRes) {
-                // Call the assertion callback
-                done(articleSaveErr);
-            });
-    });
+              // Handle article save error
+              if (articleSaveErr) {
+                return done(articleSaveErr);
+              }
 
-    it('should not be able to save an article if no title is provided', function (done) {
-        // Invalidate title field
-        article.title = '';
+              // Set assertions on new article
+              (articleSaveRes.body.title).should.equal(article.title);
+              should.exist(articleSaveRes.body.user);
+              should.equal(articleSaveRes.body.user._id, orphanId);
 
-        agent.post('/api/auth/signin')
-            .send(credentials)
-            .expect(200)
-            .end(function (signinErr, signinRes) {
-                // Handle signin error
-                if (signinErr) {
-                    return done(signinErr);
-                }
+              // force the article to have an orphaned user reference
+              orphan.remove(function () {
+                // now signin with valid user
+                agent.post('/api/auth/signin')
+                  .send(credentials)
+                  .expect(200)
+                  .end(function (err, res) {
+                    // Handle signin error
+                    if (err) {
+                      return done(err);
+                    }
 
-                // Get the userId
-                var userId = user.id;
-
-                // Save a new article
-                agent.post('/api/articles')
-                    .send(article)
-                    .expect(400)
-                    .end(function (articleSaveErr, articleSaveRes) {
-                        // Set message assertion
-                        (articleSaveRes.body.message).should.match('Title cannot be blank');
-
-                        // Handle article save error
-                        done(articleSaveErr);
-                    });
-            });
-    });
-
-    it('should be able to update an article if signed in', function (done) {
-        agent.post('/api/auth/signin')
-            .send(credentials)
-            .expect(200)
-            .end(function (signinErr, signinRes) {
-                // Handle signin error
-                if (signinErr) {
-                    return done(signinErr);
-                }
-
-                // Get the userId
-                var userId = user.id;
-
-                // Save a new article
-                agent.post('/api/articles')
-                    .send(article)
-                    .expect(200)
-                    .end(function (articleSaveErr, articleSaveRes) {
-                        // Handle article save error
-                        if (articleSaveErr) {
-                            return done(articleSaveErr);
+                    // Get the article
+                    agent.get('/api/articles/' + articleSaveRes.body._id)
+                      .expect(200)
+                      .end(function (articleInfoErr, articleInfoRes) {
+                        // Handle article error
+                        if (articleInfoErr) {
+                          return done(articleInfoErr);
                         }
 
-                        // Update article title
-                        article.title = 'WHY YOU GOTTA BE SO MEAN?';
+                        // Set assertions
+                        (articleInfoRes.body._id).should.equal(articleSaveRes.body._id);
+                        (articleInfoRes.body.title).should.equal(article.title);
+                        should.equal(articleInfoRes.body.user, undefined);
 
-                        // Update an existing article
-                        agent.put('/api/articles/' + articleSaveRes.body._id)
-                            .send(article)
-                            .expect(200)
-                            .end(function (articleUpdateErr, articleUpdateRes) {
-                                // Handle article update error
-                                if (articleUpdateErr) {
-                                    return done(articleUpdateErr);
-                                }
-
-                                // Set assertions
-                                (articleUpdateRes.body._id).should.equal(articleSaveRes.body._id);
-                                (articleUpdateRes.body.title).should.match('WHY YOU GOTTA BE SO MEAN?');
-
-                                // Call the assertion callback
-                                done();
-                            });
-                    });
+                        // Call the assertion callback
+                        done();
+                      });
+                  });
+              });
             });
-    });
-
-    it('should be able to get a list of articles if not signed in', function (done) {
-        // Create new article model instance
-        var articleObj = new Article(article);
-
-        // Save the article
-        articleObj.save(function () {
-            // Request articles
-            request(app).get('/api/articles')
-                .end(function (req, res) {
-                    // Set assertion
-                    res.body.should.be.instanceof(Array).and.have.lengthOf(1);
-
-                    // Call the assertion callback
-                    done();
-                });
-
         });
     });
+  });
 
-    it('should be able to get a single article if not signed in', function (done) {
-        // Create new article model instance
-        var articleObj = new Article(article);
+  it('should be able to get a single article if not signed in and verify the custom "isCurrentUserOwner" field is set to "false"', function (done) {
+    // Create new article model instance
+    var articleObj = new Article(article);
 
-        // Save the article
-        articleObj.save(function () {
-            request(app).get('/api/articles/' + articleObj._id)
-                .end(function (req, res) {
-                    // Set assertion
-                    res.body.should.be.instanceof(Object).and.have.property('title', article.title);
-
-                    // Call the assertion callback
-                    done();
-                });
+    // Save the article
+    articleObj.save(function (err) {
+      if (err) {
+        return done(err);
+      }
+      agent.get('/api/articles/' + articleObj._id)
+        .end(function (req, res) {
+          // Set assertion
+          res.body.should.be.instanceof(Object).and.have.property('title', article.title);
+          // Assert the custom field "isCurrentUserOwner" is set to false for the un-authenticated User
+          res.body.should.be.instanceof(Object).and.have.property('isCurrentUserOwner', false);
+          // Call the assertion callback
+          done();
         });
     });
+  });
 
-    it('should return proper error for single article with an invalid Id, if not signed in', function (done) {
-        // test is not a valid mongoose Id
-        request(app).get('/api/articles/test')
-            .end(function (req, res) {
-                // Set assertion
-                res.body.should.be.instanceof(Object).and.have.property('message', 'Article is invalid');
+  it('should be able to get single article, that a different user created, if logged in & verify the "isCurrentUserOwner" field is set to "false"', function (done) {
+    // Create temporary user creds
+    var _creds = {
+      usernameOrEmail: 'articleowner',
+      password: 'M3@n.jsI$Aw3$0m3'
+    };
 
-                // Call the assertion callback
-                done();
-            });
+    // Create user that will create the Article
+    var _articleOwner = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'temp@test.com',
+      username: _creds.usernameOrEmail,
+      password: _creds.password,
+      provider: 'local',
+      roles: ['admin', 'user']
     });
 
-    it('should return proper error for single article which doesnt exist, if not signed in', function (done) {
-        // This is a valid mongoose Id but a non-existent article
-        request(app).get('/api/articles/559e9cd815f80b4c256a8f41')
-            .end(function (req, res) {
-                // Set assertion
-                res.body.should.be.instanceof(Object).and.have.property('message', 'No article with that identifier has been found');
+    _articleOwner.save(function (err, _user) {
+      // Handle save error
+      if (err) {
+        return done(err);
+      }
 
-                // Call the assertion callback
-                done();
-            });
-    });
+      // Sign in with the user that will create the Article
+      agent.post('/api/auth/signin')
+        .send(_creds)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
 
-    it('should be able to delete an article if signed in', function (done) {
-        agent.post('/api/auth/signin')
-            .send(credentials)
+          // Get the userId
+          var userId = _user._id;
+
+          // Save a new article
+          agent.post('/api/articles')
+            .send(article)
             .expect(200)
-            .end(function (signinErr, signinRes) {
-                // Handle signin error
-                if (signinErr) {
-                    return done(signinErr);
-                }
+            .end(function (articleSaveErr, articleSaveRes) {
+              // Handle article save error
+              if (articleSaveErr) {
+                return done(articleSaveErr);
+              }
 
-                // Get the userId
-                var userId = user.id;
+              // Set assertions on new article
+              (articleSaveRes.body.title).should.equal(article.title);
+              should.exist(articleSaveRes.body.user);
+              should.equal(articleSaveRes.body.user._id, userId);
 
-                // Save a new article
-                agent.post('/api/articles')
-                    .send(article)
+              // now signin with the test suite user
+              agent.post('/api/auth/signin')
+                .send(credentials)
+                .expect(200)
+                .end(function (err, res) {
+                  // Handle signin error
+                  if (err) {
+                    return done(err);
+                  }
+
+                  // Get the article
+                  agent.get('/api/articles/' + articleSaveRes.body._id)
                     .expect(200)
-                    .end(function (articleSaveErr, articleSaveRes) {
-                        // Handle article save error
-                        if (articleSaveErr) {
-                            return done(articleSaveErr);
-                        }
+                    .end(function (articleInfoErr, articleInfoRes) {
+                      // Handle article error
+                      if (articleInfoErr) {
+                        return done(articleInfoErr);
+                      }
 
-                        // Delete an existing article
-                        agent.delete('/api/articles/' + articleSaveRes.body._id)
-                            .send(article)
-                            .expect(200)
-                            .end(function (articleDeleteErr, articleDeleteRes) {
-                                // Handle article error error
-                                if (articleDeleteErr) {
-                                    return done(articleDeleteErr);
-                                }
+                      // Set assertions
+                      (articleInfoRes.body._id).should.equal(articleSaveRes.body._id);
+                      (articleInfoRes.body.title).should.equal(article.title);
+                      // Assert that the custom field "isCurrentUserOwner" is set to false since the current User didn't create it
+                      (articleInfoRes.body.isCurrentUserOwner).should.equal(false);
 
-                                // Set assertions
-                                (articleDeleteRes.body._id).should.equal(articleSaveRes.body._id);
-
-                                // Call the assertion callback
-                                done();
-                            });
+                      // Call the assertion callback
+                      done();
                     });
-            });
-    });
-
-    it('should not be able to delete an article if not signed in', function (done) {
-        // Set article user
-        article.user = user;
-
-        // Create new article model instance
-        var articleObj = new Article(article);
-
-        // Save the article
-        articleObj.save(function () {
-            // Try deleting article
-            request(app).delete('/api/articles/' + articleObj._id)
-                .expect(403)
-                .end(function (articleDeleteErr, articleDeleteRes) {
-                    // Set message assertion
-                    (articleDeleteRes.body.message).should.match('User is not authorized');
-
-                    // Handle article error error
-                    done(articleDeleteErr);
                 });
-
+            });
         });
     });
+  });
 
-    afterEach(function (done) {
-        User.remove().exec(function () {
-            Article.remove().exec(done);
-        });
-    });
+  afterEach(function (done) {
+    Article.remove().exec()
+      .then(User.remove().exec())
+      .then(done())
+      .catch(done);
+  });
 });

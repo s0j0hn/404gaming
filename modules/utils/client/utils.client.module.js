@@ -1,8 +1,8 @@
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    ApplicationConfiguration.registerModule('app.utils', [
-        'app.colors'
-    ]);
+  ApplicationConfiguration.registerModule('app.utils', [
+    'app.colors'
+  ]);
 
 }());

@@ -1,15 +1,15 @@
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    angular
+  angular
         .module('app.loadingbar')
         .config(loadingbarConfig)
         ;
-    loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
-    function loadingbarConfig(cfpLoadingBarProvider) {
-        cfpLoadingBarProvider.includeBar = true;
-        cfpLoadingBarProvider.includeSpinner = false;
-        cfpLoadingBarProvider.latencyThreshold = 400;
-        cfpLoadingBarProvider.parentSelector = '.wrapper > section';
-    }
+  loadingbarConfig.$inject = ['cfpLoadingBarProvider'];
+  function loadingbarConfig(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeBar = true;
+    cfpLoadingBarProvider.includeSpinner = false;
+    cfpLoadingBarProvider.latencyThreshold = 500;
+    cfpLoadingBarProvider.parentSelector = '.wrapper > section';
+  }
 }());

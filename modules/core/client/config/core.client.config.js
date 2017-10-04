@@ -1,18 +1,12 @@
-'use strict';
+(function () {
+  'use strict';
 
-angular
+  angular
     .module('core')
     .config(coreConfig);
 
-coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider', 'vcRecaptchaServiceProvider'];
-function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider, vcRecaptchaServiceProvider) {
-
-    vcRecaptchaServiceProvider.setSiteKey('6LdogRsUAAAAAOZgwgIXB7QTPdjRNgkrOXP2WH0c');
-    vcRecaptchaServiceProvider.setTheme('light');
-    // vcRecaptchaServiceProvider.setStoken('');
-    vcRecaptchaServiceProvider.setSize('compact');
-    vcRecaptchaServiceProvider.setType('image');
-    vcRecaptchaServiceProvider.setLang('fr');
+  coreConfig.$inject = ['$controllerProvider', '$compileProvider', '$filterProvider', '$provide', '$animateProvider'];
+  function coreConfig($controllerProvider, $compileProvider, $filterProvider, $provide, $animateProvider) {
 
     var core = angular.module('core');
     // registering components after bootstrap
@@ -30,4 +24,6 @@ function coreConfig($controllerProvider, $compileProvider, $filterProvider, $pro
     // Improve performance disabling debugging features
     // $compileProvider.debugInfoEnabled(false);
 
-}
+  }
+
+}());

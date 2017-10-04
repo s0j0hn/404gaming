@@ -1,28 +1,28 @@
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    angular
+  angular
         .module('app.sidebar')
         .controller('UserBlockController', UserBlockController);
 
-    UserBlockController.$inject = ['$scope', 'Authentication'];
-    function UserBlockController($scope, Authentication) {
-        $scope.authentication = Authentication;
-        activate();
+  UserBlockController.$inject = ['$scope'];
+  function UserBlockController($scope) {
+
+    activate();
 
         // //////////////
 
-        function activate() {
+    function activate() {
 
-            $scope.userBlockVisible = true;
+      $scope.userBlockVisible = true;
 
-            var detach = $scope.$on('toggleUserBlock', function(/* event, args*/) {
+      var detach = $scope.$on('toggleUserBlock', function (/* event, args*/) {
 
-                $scope.userBlockVisible = !$scope.userBlockVisible;
+        $scope.userBlockVisible = ! $scope.userBlockVisible;
 
-            });
+      });
 
-            $scope.$on('$destroy', detach);
-        }
+      $scope.$on('$destroy', detach);
     }
+  }
 }());

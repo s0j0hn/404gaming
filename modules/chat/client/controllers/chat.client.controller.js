@@ -1,45 +1,55 @@
-'use strict';
+(function () {
+  'use strict';
 
-// Create the 'app.chat' controller
-angular.module('app.chat').controller('ChatController', ['$scope', '$location', 'Authentication', 'Socket',
-    function ($scope, $location, Authentication, Socket) {
+  angular
+    .module('chat')
+    .controller('ChatController', ChatController);
 
-        $scope.authentication = Authentication;
-    // Create a messages array
-        $scope.messages = [];
+  ChatController.$inject = ['$scope', '$state', 'Authentication', 'Socket'];
 
-    // If user is not signed in then redirect back home
-        if (!Authentication.user || $scope.authentication.user.roles.indexOf('banned') >= 0) {
-            $location.path('/');
-        }
+  function ChatController($scope, $state, Authentication, Socket) {
+    var vm = this;
 
-    // Make sure the Socket is connected
-        if (!Socket.socket) {
-            Socket.connect();
-        }
+    vm.messages = [];
+    vm.messageText = '';
+    vm.sendMessage = sendMessage;
 
-    // Add an event listener to the 'chatMessage' event
-        Socket.on('chatMessage', function (message) {
-            $scope.messages.unshift(message);
-        });
+    init();
+
+    function init() {
+      // If user is not signed in then redirect back home
+      if (!Authentication.user) {
+        $state.go('home');
+      }
+
+      // Make sure the Socket is connected
+      if (!Socket.socket) {
+        Socket.connect();
+      }
+
+      // Add an event listener to the 'chatMessage' event
+      Socket.on('chatMessage', function (message) {
+        vm.messages.unshift(message);
+      });
+
+      // Remove the event listener when the controller instance is destroyed
+      $scope.$on('$destroy', function () {
+        Socket.removeListener('chatMessage');
+      });
+    }
 
     // Create a controller method for sending messages
-        $scope.sendMessage = function () {
+    function sendMessage() {
       // Create a new message object
-            var message = {
-                text: this.messageText
-            };
+      var message = {
+        text: vm.messageText
+      };
 
       // Emit a 'chatMessage' message event
-            Socket.emit('chatMessage', message);
+      Socket.emit('chatMessage', message);
 
       // Clear the message text
-            this.messageText = '';
-        };
-
-    // Remove the event listener when the controller instance is destroyed
-        $scope.$on('$destroy', function () {
-            Socket.removeListener('chatMessage');
-        });
+      vm.messageText = '';
     }
-]);
+  }
+}());

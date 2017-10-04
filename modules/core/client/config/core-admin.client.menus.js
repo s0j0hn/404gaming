@@ -1,17 +1,19 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular.module('core.admin').run(['Menus',
-        function (Menus) {
+  angular
+    .module('core.admin')
+    .run(menuConfig);
 
-            Menus.addMenuItem('sidebar', {
-                title: 'Admin',
-                state: 'admin',
-                type: 'dropdown',
-                iconClass: 'fa fa-wrench',
-                roles: ['admin']
-            });
+  menuConfig.$inject = ['Menus'];
 
-        }
-    ]);
+  function menuConfig(Menus) {
+    Menus.addMenuItem('sidebar', {
+      title: 'Admin',
+      state: 'admin',
+      type: 'dropdown',
+      iconClass: 'fa fa-wrench',
+      roles: ['admin']
+    });
+  }
 }());

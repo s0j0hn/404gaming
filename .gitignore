@@ -10,18 +10,7 @@ Thumbs.db
 .nodemonignore
 .sass-cache/
 node_modules/
-/public/lib/
-/public/dist/
-/modules/core/client/css/
-/modules/extras/
-/modules/mailbox/
-/modules/forms/
-/modules/panels/
-/modules/ecommerce/
-/modules/maps/
-/modules/tables/
-/modules/elements/
-/modules/dashboard/
+public/lib/
 app/tests/coverage/
 .bower-*/
 .idea/
@@ -36,6 +25,11 @@ modules/users/client/img/profile/uploads
 config/env/local.js
 config/env/local-*.js
 *.pem
+
+# Compiled less and sass files
+# ============================
+modules/*/client/scss/*.css
+modules/*/client/less/*.css
 
 # Ignoring MEAN.JS's gh-pages branch for documenation
 _site/
@@ -72,7 +66,6 @@ local.properties
 # IntelliJ
 # ========
 *.iml
-
 
 # Cloud9 IDE
 # =========

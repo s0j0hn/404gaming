@@ -1,22 +1,22 @@
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    angular
+  angular
         .module('app.translate')
         .config(translateConfig)
         ;
-    translateConfig.$inject = ['$translateProvider'];
-    function translateConfig($translateProvider) {
+  translateConfig.$inject = ['$translateProvider'];
+  function translateConfig($translateProvider) {
 
-        $translateProvider.useStaticFilesLoader({
-            prefix: '/i18n/',
-            suffix: '.json'
-        });
+    $translateProvider.useStaticFilesLoader({
+      prefix: '/i18n/',
+      suffix: '.json'
+    });
 
-        $translateProvider.preferredLanguage('fr');
-        $translateProvider.useLocalStorage();
-        $translateProvider.usePostCompiling(true);
-        $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
+    $translateProvider.preferredLanguage('en');
+    $translateProvider.useLocalStorage();
+    $translateProvider.usePostCompiling(true);
+    $translateProvider.useSanitizeValueStrategy('sanitizeParameters');
 
-    }
+  }
 }());

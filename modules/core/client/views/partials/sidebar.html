@@ -3,29 +3,8 @@
     <nav sidebar="" sidebar-anyclick-close="" ng-class="{'show-scrollbar': app.layout.asideScrollbar}" class="sidebar">
         <!-- START sidebar nav-->
         <ul class="nav">
-            <!-- START user info-->
-            <li class="has-user-block">
-                <div ng-if="authentication.user" uib-collapse="userBlockVisible" ng-controller="UserBlockController">
-                     <div class="item user-block">
-                            <!-- User picture-->
-                            <div class="user-block-picture">
-                                 <div class="user-block-status">
-                                        <img ng-src="{{authentication.user.profileImageURL}}" alt="Avatar" class="img-thumbnail img-circle" />
-                                        <div class="circle circle-success circle-lg"></div>
-                                 </div>
-                            </div>
-                            <!-- Name and Job-->
-                            <div class="user-block-info">
-                                 <span class="user-block-name">{{ 'sidebar.WELCOME' | translate }} {{authentication.user.username}}</span>
-                                 <span class="user-block-role" ng-bind="authentication.user.roles"></span>
-                            </div>
-                     </div>
-                </div>
-            </li>
-             <!-- END user info-->
 
-
-            <li ui-sref-active-eq="active"
+            <li ui-sref-active="active"
                 ng-repeat="item in menu.items | orderBy: 'position'"
                 data-ng-if="item.shouldRender(authentication.user);"
                 ng-switch="item.type"
@@ -42,7 +21,7 @@
                     <li class="sidebar-subnav-header">{{(item.translate | translate) || item.title}}</li>
                     <li ng-repeat="subitem in item.items | orderBy: 'position'"
                         data-ng-if="subitem.shouldRender(authentication.user);"
-                        ng-class="{'active' : $state.is(subitem.state)}">
+                        ng-class="{'active' : $state.is(subitem.state) || $state.current.parent === subitem.state}">
                         <a ui-sref="{{subitem.state}}" class="menu-child">
                             <div ng-if="subitem.alert" ng-class="subitem.label || 'label label-success'" class="pull-right">{{subitem.alert}}</div>
                             <em ng-hide="inSubmenu" class="{{subitem.iconClass}}"></em>

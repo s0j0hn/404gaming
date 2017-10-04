@@ -1,19 +1,19 @@
 (function () {
-    'use strict';
+  'use strict';
 
   // Authentication service for user variables
 
-    angular
-    .module('app.users.services')
+  angular
+    .module('app.users')
     .factory('Authentication', Authentication);
 
-    Authentication.$inject = ['$window'];
+  Authentication.$inject = ['$window'];
 
-    function Authentication($window) {
-        var auth = {
-            user: $window.user
-        };
+  function Authentication($window) {
+    var auth = {
+      user: $window.user
+    };
 
-        return auth;
-    }
+    return auth;
+  }
 }());

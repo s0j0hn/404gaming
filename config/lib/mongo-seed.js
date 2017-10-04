@@ -1,148 +1,153 @@
-'use strict';
+﻿'use strict';
 
-const _ = require('lodash'), config = require('../config'), mongoose = require('mongoose'), chalk = require('chalk'), crypto = require('crypto');
+var _ = require('lodash'),
+  config = require('../config'),
+  mongoose = require('mongoose'),
+  chalk = require('chalk');
 
-// global seed options object
-let seedOptions = {};
+exports.start = start;
 
-function removeUser (user) {
-  return new Promise((resolve, reject) => {
-    const User = mongoose.model('User');
-    User.find({ username: user.username }).remove(err => {
-      if (err) {
-        reject(new Error('Failed to remove local ' + user.username));
-      }
-      resolve();
-    });
-  });
-}
+function start(seedConfig) {
+  return new Promise(function (resolve, reject) {
+    seedConfig = seedConfig || {};
 
-function saveUser (user) {
-  return () => new Promise((resolve, reject) => {
-    // Then save the user
-    user.save((err, theuser) => {
-      if (err) {
-        reject(new Error('Failed to add local ' + user.username));
-      } else {
-        resolve(theuser);
-      }
-    });
-  });
-}
+    var options = seedConfig.options || (config.seedDB ? _.clone(config.seedDB.options, true) : {});
+    var collections = seedConfig.collections || (config.seedDB ? _.clone(config.seedDB.collections, true) : []);
 
-function checkUserNotExists (user) {
-  return new Promise((resolve, reject) => {
-    const User = mongoose.model('User');
-    User.find({ username: user.username }, (err, users) => {
-      if (err) {
-        reject(new Error('Failed to find local account ' + user.username));
-      }
-
-      if (users.length === 0) {
-        resolve();
-      } else {
-        reject(new Error('Failed due to local account already exists: ' + user.username));
-      }
-    });
-  });
-}
-
-function reportSuccess (password) {
-  return user => new Promise((resolve, reject) => {
-    if (seedOptions.logResults) {
-      console.log(chalk.bold.red('Database Seeding:\t\t\tLocal ' + user.username + ' added with password set to ' + password));
+    if (!collections.length) {
+      return resolve();
     }
-    resolve();
+
+    var seeds = collections
+      .filter(function (collection) {
+        return collection.model;
+      });
+
+    // Use the reduction pattern to ensure we process seeding in desired order.
+    seeds.reduce(function (p, item) {
+      return p.then(function () {
+        return seed(item, options);
+      });
+    }, Promise.resolve()) // start with resolved promise for initial previous (p) item
+      .then(onSuccessComplete)
+      .catch(onError);
+
+    // Local Promise handlers
+
+    function onSuccessComplete() {
+      if (options.logResults) {
+        console.log();
+        console.log(chalk.bold.green('Database Seeding: Mongo Seed complete!'));
+        console.log();
+      }
+
+      return resolve();
+    }
+
+    function onError(err) {
+      if (options.logResults) {
+        console.log();
+        console.log(chalk.bold.red('Database Seeding: Mongo Seed Failed!'));
+        console.log(chalk.bold.red('Database Seeding: ' + err));
+        console.log();
+      }
+
+      return reject(err);
+    }
+
   });
 }
 
-// save the specified user with the password provided from the resolved promise
-function seedTheUser (user) {
-  return password => new Promise((resolve, reject) => {
+function seed(collection, options) {
+  // Merge options with collection options
+  options = _.merge(options || {}, collection.options || {});
 
-    const User = mongoose.model('User');
-    // set the new password
-    user.password = password;
+  return new Promise(function (resolve, reject) {
+    const Model = mongoose.model(collection.model);
+    const docs = collection.docs;
 
-    if (user.username === seedOptions.seedAdmin.username && process.env.NODE_ENV === 'production') {
-      checkUserNotExists(user)
-        .then(saveUser(user))
-        .then(reportSuccess(password))
-        .then(() => {
-          resolve();
-        })
-        .catch(err => {
-          reject(err);
-        });
-    } else {
-      removeUser(user)
-        .then(saveUser(user))
-        .then(reportSuccess(password))
-        .then(() => {
-          resolve();
-        })
-        .catch(err => {
-          reject(err);
-        });
+    var skipWhen = collection.skip ? collection.skip.when : null;
+
+    if (!Model.seed) {
+      return reject(new Error('Database Seeding: Invalid Model Configuration - ' + collection.model + '.seed() not implemented'));
+    }
+
+    if (!docs || !docs.length) {
+      return resolve();
+    }
+
+    // First check if we should skip this collection
+    // based on the collection's "skip.when" option.
+    // NOTE: If it exists, "skip.when" should be a qualified
+    // Mongoose query that will be used with Model.find().
+    skipCollection()
+      .then(seedDocuments)
+      .then(function () {
+        return resolve();
+      })
+      .catch(function (err) {
+        return reject(err);
+      });
+
+    function skipCollection() {
+      return new Promise(function (resolve, reject) {
+        if (!skipWhen) {
+          return resolve(false);
+        }
+
+        Model
+          .find(skipWhen)
+          .exec(function (err, results) {
+            if (err) {
+              return reject(err);
+            }
+
+            if (results && results.length) {
+              return resolve(true);
+            }
+
+            return resolve(false);
+          });
+      });
+    }
+
+    function seedDocuments(skipCollection) {
+      return new Promise(function (resolve, reject) {
+
+        if (skipCollection) {
+          return onComplete([{ message: chalk.yellow('Database Seeding: ' + collection.model + ' collection skipped') }]);
+        }
+
+        var workload = docs
+          .filter(function (doc) {
+            return doc.data;
+          })
+          .map(function (doc) {
+            return Model.seed(doc.data, { overwrite: doc.overwrite });
+          });
+
+        Promise.all(workload)
+          .then(onComplete)
+          .catch(onError);
+
+        // Local Closures
+
+        function onComplete(responses) {
+          if (options.logResults) {
+            responses.forEach(function (response) {
+              if (response.message) {
+                console.log(chalk.magenta(response.message));
+              }
+            });
+          }
+
+          return resolve();
+        }
+
+        function onError(err) {
+          return reject(err);
+        }
+      });
     }
   });
 }
-
-// report the error
-function reportError (reject) {
-  return err => {
-    if (seedOptions.logResults) {
-      console.log();
-      console.log('Database Seeding:\t\t\t' + err);
-      console.log();
-    }
-    reject(err);
-  };
-}
-
-module.exports.start = function start(options) {
-  // Initialize the default seed options
-  seedOptions = _.clone(config.seedDB.options, true);
-
-  // Check for provided options
-
-  if (_.has(options, 'logResults')) {
-    seedOptions.logResults = options.logResults;
-  }
-
-  if (_.has(options, 'seedUser')) { 
-    seedOptions.seedUser = options.seedUser; 
-  }
-
-  if (_.has(options, 'seedAdmin')) {
-    seedOptions.seedAdmin = options.seedAdmin;
-  }
-
-  const User = mongoose.model('User');
-  return new Promise((resolve, reject) => {
-
-    const adminAccount = new User(seedOptions.seedAdmin);
-    const userAccount = new User(seedOptions.seedUser);
-
-    //If production only seed admin if it does not exist
-    if (process.env.NODE_ENV === 'production') {
-      User.generateRandomPassphrase()
-        .then(seedTheUser(adminAccount))
-        .then(() => {
-          resolve();
-        })
-        .catch(reportError(reject));
-    } else {
-      // Add both Admin and User account
-
-      User.generateRandomPassphrase()
-        .then(seedTheUser(userAccount))
-        .then(User.generateRandomPassphrase)
-        .then(seedTheUser(adminAccount))
-        .then(() => {
-          resolve();
-        })
-        .catch(reportError(reject));
-    }
-  });
-};

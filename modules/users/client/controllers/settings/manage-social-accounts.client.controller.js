@@ -1,57 +1,55 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('app.users')
-        .controller('SocialAccountsController', SocialAccountsController);
+  angular
+    .module('app.users')
+    .controller('SocialAccountsController', SocialAccountsController);
 
-    SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication', 'Notify'];
+  SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication', 'Notify'];
 
-    function SocialAccountsController($state, $window, UsersService, Authentication, Notification) {
-        var vm = this;
+  function SocialAccountsController($state, $window, UsersService, Authentication, Notify) {
+    var vm = this;
 
-        vm.user = Authentication.user;
-        vm.hasConnectedAdditionalSocialAccounts = hasConnectedAdditionalSocialAccounts;
-        vm.isConnectedSocialAccount = isConnectedSocialAccount;
-        vm.removeUserSocialAccount = removeUserSocialAccount;
-        vm.callOauthProvider = callOauthProvider;
+    vm.user = Authentication.user;
+    vm.hasConnectedAdditionalSocialAccounts = hasConnectedAdditionalSocialAccounts;
+    vm.isConnectedSocialAccount = isConnectedSocialAccount;
+    vm.removeUserSocialAccount = removeUserSocialAccount;
+    vm.callOauthProvider = callOauthProvider;
 
-
-        // Check if there are additional accounts
-        function hasConnectedAdditionalSocialAccounts() {
-            return (vm.user.additionalProvidersData && Object.keys(vm.user.additionalProvidersData).length);
-        }
-
-        // Check if provider is already in use with current user
-        function isConnectedSocialAccount(provider) {
-            return vm.user.provider === provider || (vm.user.additionalProvidersData && vm.user.additionalProvidersData[provider]);
-        }
-
-        // Remove a user social account
-        function removeUserSocialAccount(provider) {
-            if ($window.confirm('Are you sure you want to delete this provider?')) {
-                UsersService.removeSocialAccount(provider)
-                    .then(onRemoveSocialAccountSuccess)
-                    .catch(onRemoveSocialAccountError);
-            }
-        }
-
-        function onRemoveSocialAccountSuccess(response) {
-            // If successful show success message and clear form
-            Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Removed successfully!' });
-            vm.user = Authentication.user = response;
-        }
-
-        function onRemoveSocialAccountError(response) {
-            Notification.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Remove failed!' });
-        }
-
-        // OAuth provider request
-        function callOauthProvider(url) {
-            url += '?redirect_to=' + encodeURIComponent($state.$current.url.prefix);
-
-            // Effectively call OAuth authentication route:
-            $window.location.href = url;
-        }
+    // Check if there are additional accounts
+    function hasConnectedAdditionalSocialAccounts() {
+      return (vm.user.additionalProvidersData && Object.keys(vm.user.additionalProvidersData).length);
     }
+
+    // Check if provider is already in use with current user
+    function isConnectedSocialAccount(provider) {
+      return vm.user.provider === provider || (vm.user.additionalProvidersData && vm.user.additionalProvidersData[provider]);
+    }
+
+    // Remove a user social account
+    function removeUserSocialAccount(provider) {
+
+      UsersService.removeSocialAccount(provider)
+        .then(onRemoveSocialAccountSuccess)
+        .catch(onRemoveSocialAccountError);
+    }
+
+    function onRemoveSocialAccountSuccess(response) {
+      // If successful show success message and clear form
+      Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> Removed successfully!' });
+      vm.user = Authentication.user = response;
+    }
+
+    function onRemoveSocialAccountError(response) {
+      Notify.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Remove failed!' });
+    }
+
+    // OAuth provider request
+    function callOauthProvider(url) {
+      url += '?redirect_to=' + encodeURIComponent($state.$current.url.prefix);
+
+      // Effectively call OAuth authentication route:
+      $window.location.href = url;
+    }
+  }
 }());

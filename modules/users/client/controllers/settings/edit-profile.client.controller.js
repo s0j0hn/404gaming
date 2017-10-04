@@ -1,39 +1,39 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular
-        .module('app.users')
-        .controller('EditProfileController', EditProfileController);
+  angular
+    .module('app.users')
+    .controller('EditProfileController', EditProfileController);
 
-    EditProfileController.$inject = ['$scope', 'UsersService', 'Authentication'];
+  EditProfileController.$inject = ['$scope', '$http', '$location', 'UsersService', 'Authentication', 'Notify'];
 
-    function EditProfileController($scope, UsersService, Authentication, SweetAlert) {
-        var vm = this;
+  function EditProfileController($scope, $http, $location, UsersService, Authentication, Notify) {
+    var vm = this;
 
-        vm.user = Authentication.user;
-        vm.updateUserProfile = updateUserProfile;
+    vm.user = Authentication.user;
+    vm.updateUserProfile = updateUserProfile;
 
+    // Update a user profile
+    function updateUserProfile(isValid) {
 
-        // Update a user profile
-        function updateUserProfile(isValid) {
+      if (!isValid) {
+        $scope.$broadcast('show-errors-check-validity', 'vm.userForm');
 
-            if (!isValid) {
-                $scope.$broadcast('show-errors-check-validity', 'vm.userForm');
+        return false;
+      }
 
-                return false;
-            }
+      var user = new UsersService(vm.user);
 
-            var user = new UsersService(vm.user);
+      user.$update(function (response) {
+        $scope.$broadcast('show-errors-reset', 'vm.userForm');
 
-            user.$update(function (response) {
-                $scope.$broadcast('show-errors-reset', 'vm.userForm');
-
-                swal('Success', 'Profile Edited!', 'success');
-
-                Authentication.user = response;
-            }, function (response) {
-                swal('Cancelled', 'Edit profile failed!' + response.toString(), 'error');
-            });
-        }
+        // Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> Edit profile successful!' });
+        Notify.alert('Edit profile successful!', { status: 'success' });
+        Authentication.user = response;
+      }, function (response) {
+        // Notify.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Edit profile failed!' });
+        Notify.alert(response.data.message, { status: 'success' });
+      });
     }
+  }
 }());

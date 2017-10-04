@@ -1,11 +1,19 @@
-'use strict';
+(function () {
+  'use strict';
 
-// Configuring the Articles module
-angular.module('app.users.admin').run(['Menus',
-    function (Menus) {
-        Menus.addSubMenuItem('sidebar', 'admin', {
-            title: 'Manage Users',
-            state: 'app.admin.users'
-        });
-    }
-]);
+  angular
+    .module('app.users.admin')
+    .run(menuConfig);
+
+  menuConfig.$inject = ['Menus'];
+
+  // Configuring the Users module
+  function menuConfig(Menus) {
+
+
+    Menus.addSubMenuItem('sidebar', 'admin', {
+      title: 'Manage Users',
+      state: 'app.admin.users'
+    });
+  }
+}());

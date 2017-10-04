@@ -1,153 +1,117 @@
 'use strict';
 
-var _ = require('lodash'),
-    config = require('../config'),
-    mongoose = require('mongoose'),
-    chalk = require('chalk');
+// Load the module dependencies
+var config = require('../config'),
+  path = require('path'),
+  fs = require('fs'),
+  http = require('http'),
+  https = require('https'),
+  cookieParser = require('cookie-parser'),
+  passport = require('passport'),
+  socketio = require('socket.io'),
+  session = require('express-session'),
+  MongoStore = require('connect-mongo')(session);
 
-exports.start = start;
+// Define the Socket.io configuration method
+module.exports = function (app, db) {
+  var server;
+  if (config.secure && config.secure.ssl === true) {
+    // Load SSL key and certificate
+    var privateKey = fs.readFileSync(path.resolve(config.secure.privateKey), 'utf8');
+    var certificate = fs.readFileSync(path.resolve(config.secure.certificate), 'utf8');
+    var caBundle;
 
-function start(seedConfig) {
-    return new Promise(function (resolve, reject) {
-        seedConfig = seedConfig || {};
+    try {
+      caBundle = fs.readFileSync(path.resolve(config.secure.caBundle), 'utf8');
+    } catch (err) {
+      console.log('Warning: couldn\'t find or read caBundle file');
+    }
 
-        var options = seedConfig.options || (config.seedDB ? _.clone(config.seedDB.options, true) : {});
-        var collections = seedConfig.collections || (config.seedDB ? _.clone(config.seedDB.collections, true) : []);
+    var options = {
+      key: privateKey,
+      cert: certificate,
+      ca: caBundle,
+      //  requestCert : true,
+      //  rejectUnauthorized : true,
+      secureProtocol: 'TLSv1_method',
+      ciphers: [
+        'ECDHE-RSA-AES128-GCM-SHA256',
+        'ECDHE-ECDSA-AES128-GCM-SHA256',
+        'ECDHE-RSA-AES256-GCM-SHA384',
+        'ECDHE-ECDSA-AES256-GCM-SHA384',
+        'DHE-RSA-AES128-GCM-SHA256',
+        'ECDHE-RSA-AES128-SHA256',
+        'DHE-RSA-AES128-SHA256',
+        'ECDHE-RSA-AES256-SHA384',
+        'DHE-RSA-AES256-SHA384',
+        'ECDHE-RSA-AES256-SHA256',
+        'DHE-RSA-AES256-SHA256',
+        'HIGH',
+        '!aNULL',
+        '!eNULL',
+        '!EXPORT',
+        '!DES',
+        '!RC4',
+        '!MD5',
+        '!PSK',
+        '!SRP',
+        '!CAMELLIA'
+      ].join(':'),
+      honorCipherOrder: true
+    };
 
-        if (!collections.length) {
-            return resolve();
-        }
+    // Create new HTTPS Server
+    server = https.createServer(options, app);
+  } else {
+    // Create a new HTTP server
+    server = http.createServer(app);
+  }
+  // Create a new Socket.io server
+  var io = socketio.listen(server);
 
-        var seeds = collections
-            .filter(function (collection) {
-                return collection.model;
-            });
+  // Create a MongoDB storage object
+  var mongoStore = new MongoStore({
+    db: db,
+    collection: config.sessionCollection
+  });
 
-        // Use the reduction pattern to ensure we process seeding in desired order.
-        seeds.reduce(function (p, item) {
-            return p.then(function () {
-                return seed(item, options);
-            });
-        }, Promise.resolve()) // start with resolved promise for initial previous (p) item
-            .then(onSuccessComplete)
-            .catch(onError);
+  // Intercept Socket.io's handshake request
+  io.use(function (socket, next) {
+    // Use the 'cookie-parser' module to parse the request cookies
+    cookieParser(config.sessionSecret)(socket.request, {}, function (err) {
+      // Get the session id from the request cookies
+      var sessionId = socket.request.signedCookies ? socket.request.signedCookies[config.sessionKey] : undefined;
 
-        // Local Promise handlers
+      if (!sessionId) return next(new Error('sessionId was not found in socket.request'), false);
 
-        function onSuccessComplete() {
-            if (options.logResults) {
-                console.log();
-                console.log(chalk.bold.green('Database Seeding: Mongo Seed complete!'));
-                console.log();
+      // Use the mongoStorage instance to get the Express session information
+      mongoStore.get(sessionId, function (err, session) {
+        if (err) return next(err, false);
+        if (!session) return next(new Error('session was not found for ' + sessionId), false);
+
+        // Set the Socket.io session information
+        socket.request.session = session;
+
+        // Use Passport to populate the user details
+        passport.initialize()(socket.request, {}, function () {
+          passport.session()(socket.request, {}, function () {
+            if (socket.request.user) {
+              next(null, true);
+            } else {
+              next(new Error('User is not authenticated'), false);
             }
-
-            return resolve();
-        }
-
-        function onError(err) {
-            if (options.logResults) {
-                console.log();
-                console.log(chalk.bold.red('Database Seeding: Mongo Seed Failed!'));
-                console.log(chalk.bold.red('Database Seeding: ' + err));
-                console.log();
-            }
-
-            return reject(err);
-        }
-
+          });
+        });
+      });
     });
-}
+  });
 
-function seed(collection, options) {
-    // Merge options with collection options
-    options = _.merge(options || {}, collection.options || {});
-
-    return new Promise(function (resolve, reject) {
-        const Model = mongoose.model(collection.model);
-        const docs = collection.docs;
-
-        var skipWhen = collection.skip ? collection.skip.when : null;
-
-        if (!Model.seed) {
-            return reject(new Error('Database Seeding: Invalid Model Configuration - ' + collection.model + '.seed() not implemented'));
-        }
-
-        if (!docs || !docs.length) {
-            return resolve();
-        }
-
-        // First check if we should skip this collection
-        // based on the collection's "skip.when" option.
-        // NOTE: If it exists, "skip.when" should be a qualified
-        // Mongoose query that will be used with Model.find().
-        skipCollection()
-            .then(seedDocuments)
-            .then(function () {
-                return resolve();
-            })
-            .catch(function (err) {
-                return reject(err);
-            });
-
-        function skipCollection() {
-            return new Promise(function (resolve, reject) {
-                if (!skipWhen) {
-                    return resolve(false);
-                }
-
-                Model
-                    .find(skipWhen)
-                    .exec(function (err, results) {
-                        if (err) {
-                            return reject(err);
-                        }
-
-                        if (results && results.length) {
-                            return resolve(true);
-                        }
-
-                        return resolve(false);
-                    });
-            });
-        }
-
-        function seedDocuments(skipCollection) {
-            return new Promise(function (resolve, reject) {
-
-                if (skipCollection) {
-                    return onComplete([{ message: chalk.yellow('Database Seeding: ' + collection.model + ' collection skipped') }]);
-                }
-
-                var workload = docs
-                    .filter(function (doc) {
-                        return doc.data;
-                    })
-                    .map(function (doc) {
-                        return Model.seed(doc.data, { overwrite: doc.overwrite });
-                    });
-
-                Promise.all(workload)
-                    .then(onComplete)
-                    .catch(onError);
-
-                // Local Closures
-
-                function onComplete(responses) {
-                    if (options.logResults) {
-                        responses.forEach(function (response) {
-                            if (response.message) {
-                                console.log(chalk.magenta(response.message));
-                            }
-                        });
-                    }
-
-                    return resolve();
-                }
-
-                function onError(err) {
-                    return reject(err);
-                }
-            });
-        }
+  // Add an event listener to the 'connection' event
+  io.on('connection', function (socket) {
+    config.files.server.sockets.forEach(function (socketConfiguration) {
+      require(path.resolve(socketConfiguration))(io, socket);
     });
-}
+  });
+
+  return server;
+};

@@ -1,5 +1,5 @@
-(function() {
-    'use strict';
+(function () {
+  'use strict';
 
-    ApplicationConfiguration.registerModule('app.loadingbar');
+  ApplicationConfiguration.registerModule('app.loadingbar');
 }());
