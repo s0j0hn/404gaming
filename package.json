@@ -78,7 +78,7 @@
     "gulp-uglify": "~3.0.0",
     "helmet": "^3.8.2",
     "imagemin-pngquant": "~5.0.1",
-    "jasmine-core": "^2.8.0",
+    "jasmine-core": "^3.0.0",
     "lodash": "~4.17.4",
     "lusca": "^1.5.2",
     "method-override": "^2.3.10",
