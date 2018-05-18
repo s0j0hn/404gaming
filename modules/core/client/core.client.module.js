@@ -1,14 +1,6 @@
-(function (app) {
-  'use strict';
-
-  app.registerModule('core',
-    [
-      'app.routes',
-      'app.sidebar',
-      'app.loadingbar',
-      'app.utils'
-    ]);
+(((app) => {
+  app.registerModule('core');
   app.registerModule('core.routes', ['ui.router']);
   app.registerModule('core.admin', ['core']);
   app.registerModule('core.admin.routes', ['ui.router']);
-}(ApplicationConfiguration));
+})(ApplicationConfiguration));

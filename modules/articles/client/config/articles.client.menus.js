@@ -1,24 +1,23 @@
-(function () {
-  'use strict';
+((() => {
+  angular
+    .module('articles')
+    .run(menuConfig);
 
-  // Configuring the Articles module
-  angular.module('app.articles').run(['Menus',
-    function (Menus) {
-      // Add the articles dropdown item
-      Menus.addMenuItem('sidebar', {
-        title: 'Articles',
-        state: 'app.articles.list',
-        iconClass: 'fa fa-newspaper-o ',
-        type: 'item',
-        roles: ['*']
-      });
+  menuConfig.$inject = ['menuService'];
 
-      // Add the dropdown create item
-      Menus.addSubMenuItem('sidebar', 'admin', {
-        title: 'Create Articles',
-        state: 'app.admin.articles.create',
-        roles: ['admin']
-      });
-    }
-  ]);
-}());
+  function menuConfig(menuService) {
+    menuService.addMenuItem('topbar', {
+      title: 'Articles',
+      state: 'articles',
+      type: 'dropdown',
+      roles: ['*'],
+    });
+
+    // Add the dropdown list item
+    menuService.addSubMenuItem('topbar', 'articles', {
+      title: 'List Articles',
+      state: 'articles.list',
+      roles: ['*'],
+    });
+  }
+})());

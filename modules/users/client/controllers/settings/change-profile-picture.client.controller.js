@@ -1,32 +1,29 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users')
+    .module('users')
     .controller('ChangeProfilePictureController', ChangeProfilePictureController);
 
-  ChangeProfilePictureController.$inject = ['$timeout', 'Authentication', 'Upload', 'Notify'];
+  ChangeProfilePictureController.$inject = ['$timeout', 'Authentication', 'Upload', 'Notification'];
 
-  function ChangeProfilePictureController($timeout, Authentication, Upload, Notify) {
-    var vm = this;
+  function ChangeProfilePictureController($timeout, Authentication, Upload, Notification) {
+    const vm = this;
 
     vm.user = Authentication.user;
     vm.progress = 0;
 
-    vm.upload = function (dataUrl) {
-
+    vm.upload = (dataUrl) => {
       Upload.upload({
         url: '/api/users/picture',
         data: {
-          newProfilePicture: dataUrl
-        }
-      }).then(function (response) {
-        $timeout(function () {
+          newProfilePicture: dataUrl,
+        },
+      }).then((response) => {
+        $timeout(() => {
           onSuccessItem(response.data);
         });
-      }, function (response) {
+      }, (response) => {
         if (response.status > 0) onErrorItem(response.data);
-      }, function (evt) {
+      }, (evt) => {
         vm.progress = parseInt(100.0 * evt.loaded / evt.total, 10);
       });
     };
@@ -34,7 +31,7 @@
     // Called after the user has successfully uploaded a new picture
     function onSuccessItem(response) {
       // Show success message
-      Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> Successfully changed profile picture' });
+      Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Successfully changed profile picture' });
 
       // Populate user object
       vm.user = Authentication.user = response;
@@ -50,7 +47,7 @@
       vm.progress = 0;
 
       // Show error message
-      Notify.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Failed to change profile picture' });
+      Notification.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Failed to change profile picture' });
     }
   }
-}());
+})());

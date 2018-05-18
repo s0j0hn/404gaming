@@ -1,6 +1,4 @@
-(function (app) {
-  'use strict';
-
+(((app) => {
   // Start by defining the main module and adding the module dependencies
   angular
     .module(app.applicationModuleName, app.applicationModuleVendorDependencies);
@@ -15,7 +13,7 @@
   function bootstrapConfig($compileProvider, $locationProvider, $httpProvider, $logProvider) {
     $locationProvider.html5Mode({
       enabled: true,
-      requireBase: false
+      requireBase: false,
     }).hashPrefix('!');
 
     $httpProvider.interceptors.push('authInterceptor');
@@ -37,9 +35,9 @@
         window.history.pushState('', document.title, window.location.pathname);
       } else {
         // Prevent scrolling by storing the page's current scroll offset
-        var scroll = {
+        const scroll = {
           top: document.body.scrollTop,
-          left: document.body.scrollLeft
+          left: document.body.scrollLeft,
         };
         window.location.hash = '';
         // Restore the scroll offset, should be flicker free
@@ -51,4 +49,4 @@
     // Then init the app
     angular.bootstrap(document, [app.applicationModuleName]);
   }
-}(ApplicationConfiguration));
+})(ApplicationConfiguration));

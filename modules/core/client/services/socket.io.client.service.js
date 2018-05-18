@@ -1,6 +1,4 @@
-(function () {
-  'use strict';
-
+((() => {
   // Create the Socket.io wrapper service
   angular
     .module('core')
@@ -9,12 +7,12 @@
   Socket.$inject = ['Authentication', '$state', '$timeout'];
 
   function Socket(Authentication, $state, $timeout) {
-    var service = {
-      connect: connect,
-      emit: emit,
-      on: on,
-      removeListener: removeListener,
-      socket: null
+    const service = {
+      connect,
+      emit,
+      on,
+      removeListener,
+      socket: null,
     };
 
     connect();
@@ -39,8 +37,8 @@
     // Wrap the Socket.io 'on' method
     function on(eventName, callback) {
       if (service.socket) {
-        service.socket.on(eventName, function (data) {
-          $timeout(function () {
+        service.socket.on(eventName, (data) => {
+          $timeout(() => {
             callback(data);
           });
         });
@@ -54,4 +52,4 @@
       }
     }
   }
-}());
+})());

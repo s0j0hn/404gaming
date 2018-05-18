@@ -1,70 +1,68 @@
-(function () {
-  'use strict';
-
+((() => {
   // Users service used for communicating with the users REST endpoint
   angular
-    .module('app.users')
+    .module('users.services')
     .factory('UsersService', UsersService);
 
   UsersService.$inject = ['$resource'];
 
   function UsersService($resource) {
-    var Users = $resource('/api/users', {}, {
+    const Users = $resource('/api/users', {}, {
       update: {
-        method: 'PUT'
+        method: 'PUT',
       },
       updatePassword: {
         method: 'POST',
-        url: '/api/users/password'
+        url: '/api/users/password',
       },
       deleteProvider: {
         method: 'DELETE',
         url: '/api/users/accounts',
         params: {
-          provider: '@provider'
-        }
+          provider: '@provider',
+        },
       },
       sendPasswordResetToken: {
         method: 'POST',
-        url: '/api/auth/forgot'
+        url: '/api/auth/forgot',
       },
       resetPasswordWithToken: {
         method: 'POST',
-        url: '/api/auth/reset/:token'
+        url: '/api/auth/reset/:token',
       },
       signup: {
         method: 'POST',
-        url: '/api/auth/signup'
+        url: '/api/auth/signup',
       },
       signin: {
         method: 'POST',
-        url: '/api/auth/signin'
-      }
+        url: '/api/auth/signin',
+      },
     });
 
     angular.extend(Users, {
-      changePassword: function (passwordDetails) {
+      changePassword(passwordDetails) {
         return this.updatePassword(passwordDetails).$promise;
       },
-      removeSocialAccount: function (provider) {
+      removeSocialAccount(provider) {
         return this.deleteProvider({
-          provider: provider // api expects provider as a querystring parameter
+          provider, // api expects provider as a querystring parameter
         }).$promise;
       },
-      requestPasswordReset: function (credentials) {
+      requestPasswordReset(credentials) {
         return this.sendPasswordResetToken(credentials).$promise;
       },
-      resetPassword: function (token, passwordDetails) {
+      resetPassword(token, passwordDetails) {
         return this.resetPasswordWithToken({
-          token: token // api expects token as a parameter (i.e. /:token)
+          token, // api expects token as a parameter (i.e. /:token)
         }, passwordDetails).$promise;
       },
-      userSignup: function (credentials) {
+      userSignup(credentials) {
         return this.signup(credentials).$promise;
       },
-      userSignin: function (credentials) {
+      userSignin(credentials) {
         return this.signin(credentials).$promise;
-      }
+      },
     });
 
     return Users;
@@ -72,18 +70,18 @@
 
   // TODO this should be Users service
   angular
-    .module('app.users.admin')
+    .module('users.admin.services')
     .factory('AdminService', AdminService);
 
   AdminService.$inject = ['$resource'];
 
   function AdminService($resource) {
     return $resource('/api/users/:userId', {
-      userId: '@_id'
+      userId: '@_id',
     }, {
       update: {
-        method: 'PUT'
-      }
+        method: 'PUT',
+      },
     });
   }
-}());
+})());

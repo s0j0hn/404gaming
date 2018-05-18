@@ -1,14 +1,12 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users')
+    .module('users')
     .controller('SocialAccountsController', SocialAccountsController);
 
-  SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication', 'Notify'];
+  SocialAccountsController.$inject = ['$state', '$window', 'UsersService', 'Authentication', 'Notification'];
 
-  function SocialAccountsController($state, $window, UsersService, Authentication, Notify) {
-    var vm = this;
+  function SocialAccountsController($state, $window, UsersService, Authentication, Notification) {
+    const vm = this;
 
     vm.user = Authentication.user;
     vm.hasConnectedAdditionalSocialAccounts = hasConnectedAdditionalSocialAccounts;
@@ -28,7 +26,6 @@
 
     // Remove a user social account
     function removeUserSocialAccount(provider) {
-
       UsersService.removeSocialAccount(provider)
         .then(onRemoveSocialAccountSuccess)
         .catch(onRemoveSocialAccountError);
@@ -36,20 +33,20 @@
 
     function onRemoveSocialAccountSuccess(response) {
       // If successful show success message and clear form
-      Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> Removed successfully!' });
+      Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Removed successfully!' });
       vm.user = Authentication.user = response;
     }
 
     function onRemoveSocialAccountError(response) {
-      Notify.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Remove failed!' });
+      Notification.error({ message: response.message, title: '<i class="glyphicon glyphicon-remove"></i> Remove failed!' });
     }
 
     // OAuth provider request
     function callOauthProvider(url) {
-      url += '?redirect_to=' + encodeURIComponent($state.$current.url.prefix);
+      url += `?redirect_to=${encodeURIComponent($state.$current.url.prefix)}`;
 
       // Effectively call OAuth authentication route:
       $window.location.href = url;
     }
   }
-}());
+})());

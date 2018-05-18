@@ -1,71 +1,33 @@
-'use strict';
+/* eslint comma-dangle:[0, "only-multiline"] */
 
 module.exports = {
   client: {
     lib: {
       css: [
-        // 'public/lib/bootstrap/dist/css/bootstrap.css',
-        // 'public/lib/bootstrap/dist/css/bootstrap-theme.css',
-        'public/lib/angular-ui-notification/dist/angular-ui-notification.css'
+        // yarn:css
+        'node_modules/bootstrap/dist/css/bootstrap.css',
+        'node_modules/bootstrap/dist/css/bootstrap-theme.css',
+        'node_modules/angular-ui-notification/dist/angular-ui-notification.css'
+        // endyarn
       ],
       js: [
-        'public/lib/jquery/dist/jquery.js',
-        'public/lib/angular/angular.js',
-        'public/lib/angular-resource/angular-resource.js',
-        'public/lib/angular-animate/angular-animate.js',
-        'public/lib/angular-messages/angular-messages.js',
-        'public/lib/angular-ui-router/release/angular-ui-router.js',
-        // 'public/lib/angular-ui-utils/ui-utils.js',
-        'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
-        'public/lib/angular-file-upload/dist/angular-file-upload.js',
-        'public/lib/owasp-password-strength-test/owasp-password-strength-test.js',
-        'public/lib/angular-ui-notification/dist/angular-ui-notification.js',
-        'public/lib/ng-file-upload/ng-file-upload.js',
-        ///////
-
-        // 'public/lib/angular/angular.js',
-        'public/lib/angular-route/angular-route.js',
-        'public/lib/angular-cookies/angular-cookies.js',
-        // 'public/lib/angular-animate/angular-animate.js',
-        'public/lib/angular-touch/angular-touch.js',
-        // 'public/lib/angular-ui-router/release/angular-ui-router.js',
-        'public/lib/ngstorage/ngStorage.js',
-        'public/lib/angular-ui-utils/index.js',
-        'public/lib/angular-ui-mask/dist/mask.js',
-        'public/lib/angular-ui-event/dist/event.js',
-        'public/lib/angular-ui-validate/dist/validate.js',
-        'public/lib/angular-ui-indeterminate/dist/indeterminate.js',
-        'public/lib/angular-ui-scrollpoint/dist/scrollpoint.js',
-        'public/lib/angular-ui-scroll/dist/ui-scroll.js',
-        'public/lib/angular-ui-uploader/dist/uploader.js',
-        // 'public/lib/angular-sanitize/angular-sanitize.js',
-        // 'public/lib/angular-resource/angular-resource.js',
-        'public/lib/angular-translate/angular-translate.js',
-        'public/lib/angular-translate-loader-url/angular-translate-loader-url.js',
-        'public/lib/angular-translate-loader-static-files/angular-translate-loader-static-files.js',
-        'public/lib/angular-translate-storage-local/angular-translate-storage-local.js',
-        'public/lib/angular-translate-storage-cookie/angular-translate-storage-cookie.js',
-        'public/lib/oclazyload/dist/ocLazyLoad.js',
-        // 'public/lib/angular-bootstrap/ui-bootstrap-tpls.js',
-        'public/lib/angular-loading-bar/build/loading-bar.js',
-        'public/lib/jquery.browser/dist/jquery.browser.js',
-        'public/lib/angular-dynamic-locale/dist/tmhDynamicLocale.js',
-        'public/lib/matchMedia/matchMedia.js',
-        //
-        'public/lib/textAngular/dist/textAngular.js',
-        'public/lib/textAngular/dist/textAngularSetup.js',
-        'public/lib/rangy/rangy-core.js',
-        'public/lib/rangy/rangy-selectionsaverestore.js',
-        'public/lib/textAngular/dist/textAngular-sanitize.min.js',
-        'public/lib/ngWig/dist/ng-wig.min.js',
-        'public/lib/angular-recaptcha/release/angular-recaptcha.js'
+        // yarn:js
+        'node_modules/angular/angular.js',
+        'node_modules/angular-animate/angular-animate.js',
+        'node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js',
+        'node_modules/angular-file-upload/dist/angular-file-upload.js',
+        'node_modules/angular-messages/angular-messages.js',
+        'node_modules/angular-mocks/angular-mocks.js',
+        'node_modules/angular-resource/angular-resource.js',
+        'node_modules/angular-ui-notification/dist/angular-ui-notification.js',
+        'node_modules/angular-ui-router/release/angular-ui-router.js',
+        // 'node_modules/owasp-password-strength-test/owasp-password-strength-test.js'
+        // endyarn
       ],
-      tests: ['public/lib/angular-mocks/angular-mocks.js']
+      tests: ['node_modules/angular-mocks/angular-mocks.js']
     },
     css: [
-      'modules/*/client/css/bootstrap.css',
-      'modules/*/client/css/core.css',
-      'modules/*/client/css/*.css'
+      'modules/*/client/{css,less,scss}/*.css'
     ],
     less: [
       'modules/*/client/less/*.less'
@@ -79,17 +41,23 @@ module.exports = {
       'modules/*/client/*.js',
       'modules/*/client/**/*.js'
     ],
+    img: [
+      'modules/**/*/img/**/*.jpg',
+      'modules/**/*/img/**/*.png',
+      'modules/**/*/img/**/*.gif',
+      'modules/**/*/img/**/*.svg'
+    ],
     views: ['modules/*/client/views/**/*.html'],
     templates: ['build/templates.js']
   },
   server: {
-    gulpConfig: 'gulpfile.js',
+    gulpConfig: ['gulpfile.js'],
     allJS: ['server.js', 'config/**/*.js', 'modules/*/server/**/*.js'],
-    models: 'modules/*/server/models/**/*.js',
+    models: 'modules/*/server/models/*.js',
     routes: ['modules/!(core)/server/routes/**/*.js', 'modules/core/server/routes/**/*.js'],
     sockets: 'modules/*/server/sockets/**/*.js',
-    config: 'modules/*/server/config/*.js',
+    config: ['modules/*/server/config/*.js'],
     policies: 'modules/*/server/policies/*.js',
-    views: 'modules/*/server/views/*.html'
+    views: ['modules/*/server/views/*.html']
   }
 };

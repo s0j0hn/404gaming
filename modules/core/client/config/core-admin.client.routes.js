@@ -1,21 +1,19 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('core.admin')
+    .module('core.admin.routes')
     .config(routeConfig);
 
   routeConfig.$inject = ['$stateProvider'];
 
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('app.admin', {
+      .state('admin', {
         abstract: true,
         url: '/admin',
         template: '<ui-view/>',
         data: {
-          roles: ['admin']
-        }
+          roles: ['admin'],
+        },
       });
   }
-}());
+})());

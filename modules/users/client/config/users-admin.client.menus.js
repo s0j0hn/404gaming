@@ -1,19 +1,15 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users.admin')
+    .module('users.admin')
     .run(menuConfig);
 
-  menuConfig.$inject = ['Menus'];
+  menuConfig.$inject = ['menuService'];
 
   // Configuring the Users module
-  function menuConfig(Menus) {
-
-
-    Menus.addSubMenuItem('sidebar', 'admin', {
+  function menuConfig(menuService) {
+    menuService.addSubMenuItem('topbar', 'admin', {
       title: 'Manage Users',
-      state: 'app.admin.users'
+      state: 'admin.users',
     });
   }
-}());
+})());

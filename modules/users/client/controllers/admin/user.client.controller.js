@@ -1,14 +1,12 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users.admin')
+    .module('users.admin')
     .controller('UserController', UserController);
 
-  UserController.$inject = ['$scope', '$state', '$window', 'Authentication', 'userResolve', 'Notify'];
+  UserController.$inject = ['$scope', '$state', '$window', 'Authentication', 'userResolve', 'Notification'];
 
-  function UserController($scope, $state, $window, Authentication, user, Notify) {
-    var vm = this;
+  function UserController($scope, $state, $window, Authentication, user, Notification) {
+    const vm = this;
 
     vm.authentication = Authentication;
     vm.user = user;
@@ -22,11 +20,11 @@
           user.$remove();
 
           vm.users.splice(vm.users.indexOf(user), 1);
-          Notify.success('User deleted successfully!');
+          Notification.success('User deleted successfully!');
         } else {
-          vm.user.$remove(function () {
+          vm.user.$remove(() => {
             $state.go('admin.users');
-            Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> User deleted successfully!' });
+            Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User deleted successfully!' });
           });
         }
       }
@@ -39,15 +37,15 @@
         return false;
       }
 
-      var user = vm.user;
+      const user = vm.user;
 
-      user.$update(function () {
+      user.$update(() => {
         $state.go('admin.user', {
-          userId: user._id
+          userId: user._id,
         });
-        Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> User saved successfully!' });
-      }, function (errorResponse) {
-        Notify.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
+        Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> User saved successfully!' });
+      }, (errorResponse) => {
+        Notification.error({ message: errorResponse.data.message, title: '<i class="glyphicon glyphicon-remove"></i> User update error!' });
       });
     }
 
@@ -55,4 +53,4 @@
       return vm.user.username === vm.authentication.user.username;
     }
   }
-}());
+})());

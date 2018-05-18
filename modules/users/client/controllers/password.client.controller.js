@@ -1,14 +1,12 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users')
+    .module('users')
     .controller('PasswordController', PasswordController);
 
-  PasswordController.$inject = ['$scope', '$stateParams', 'UsersService', '$location', 'Authentication', 'PasswordValidator', 'Notify'];
+  PasswordController.$inject = ['$scope', '$stateParams', 'UsersService', '$location', 'Authentication', 'PasswordValidator', 'Notification'];
 
-  function PasswordController($scope, $stateParams, UsersService, $location, Authentication, PasswordValidator, Notify) {
-    var vm = this;
+  function PasswordController($scope, $stateParams, UsersService, $location, Authentication, PasswordValidator, Notification) {
+    const vm = this;
 
     vm.resetUserPassword = resetUserPassword;
     vm.askForPasswordReset = askForPasswordReset;
@@ -22,7 +20,6 @@
 
     // Submit forgotten password account id
     function askForPasswordReset(isValid) {
-
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.forgotPasswordForm');
 
@@ -36,7 +33,6 @@
 
     // Change user password
     function resetUserPassword(isValid) {
-
       if (!isValid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.resetPasswordForm');
 
@@ -53,13 +49,13 @@
     function onRequestPasswordResetSuccess(response) {
       // Show user success message and clear form
       vm.credentials = null;
-      Notify.success({ message: response.message, title: '<i class="glyphicon glyphicon-ok"></i> Password reset email sent successfully!' });
+      Notification.success({ message: response.message, title: '<i class="glyphicon glyphicon-ok"></i> Password reset email sent successfully!' });
     }
 
     function onRequestPasswordResetError(response) {
       // Show user error message and clear form
       vm.credentials = null;
-      Notify.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Failed to send password reset email!', delay: 4000 });
+      Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Failed to send password reset email!', delay: 4000 });
     }
 
     function onResetPasswordSuccess(response) {
@@ -68,13 +64,13 @@
 
       // Attach user profile
       Authentication.user = response;
-      Notify.success({ message: '<i class="glyphicon glyphicon-ok"></i> Password reset successful!' });
+      Notification.success({ message: '<i class="glyphicon glyphicon-ok"></i> Password reset successful!' });
       // And redirect to the index page
-      $location.path('/page/password/reset/success');
+      $location.path('/password/reset/success');
     }
 
     function onResetPasswordError(response) {
-      Notify.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Password reset failed!', delay: 4000 });
+      Notification.error({ message: response.data.message, title: '<i class="glyphicon glyphicon-remove"></i> Password reset failed!', delay: 4000 });
     }
   }
-}());
+})());

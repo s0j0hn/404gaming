@@ -1,12 +1,11 @@
-'use strict';
-
 /**
  * Module dependencies.
  */
 
-var path = require('path');
-var app = require(path.resolve('./config/lib/app'));
+const path = require('path');
 
-app.init(function () {
+const app = require(path.resolve('./config/lib/app'));
+
+app.init(() => {
   console.log('Initialized test automation');
 });

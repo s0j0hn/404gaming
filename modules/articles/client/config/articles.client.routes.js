@@ -1,36 +1,34 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.articles.routes')
+    .module('articles.routes')
     .config(routeConfig);
 
   routeConfig.$inject = ['$stateProvider'];
 
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('app.articles', {
+      .state('articles', {
         abstract: true,
         url: '/articles',
-        template: '<ui-view/>'
+        template: '<ui-view/>',
       })
-      .state('app.articles.list', {
+      .state('articles.list', {
         url: '',
         templateUrl: '/modules/articles/client/views/list-articles.client.view.html',
         controller: 'ArticlesListController',
-        controllerAs: 'vm'
+        controllerAs: 'vm',
       })
-      .state('app.articles.view', {
+      .state('articles.view', {
         url: '/:articleId',
         templateUrl: '/modules/articles/client/views/view-article.client.view.html',
         controller: 'ArticlesController',
         controllerAs: 'vm',
         resolve: {
-          articleResolve: getArticle
+          articleResolve: getArticle,
         },
         data: {
-          pageTitle: '{{ articleResolve.title }}'
-        }
+          pageTitle: '{{ articleResolve.title }}',
+        },
       });
   }
 
@@ -38,7 +36,7 @@
 
   function getArticle($stateParams, ArticlesService) {
     return ArticlesService.get({
-      articleId: $stateParams.articleId
+      articleId: $stateParams.articleId,
     }).$promise;
   }
-}());
+})());

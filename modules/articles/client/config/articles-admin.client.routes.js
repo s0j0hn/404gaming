@@ -1,39 +1,37 @@
-﻿(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.articles.admin')
+    .module('articles.admin.routes')
     .config(routeConfig);
 
   routeConfig.$inject = ['$stateProvider'];
 
   function routeConfig($stateProvider) {
     $stateProvider
-      .state('app.admin.articles', {
+      .state('admin.articles', {
         abstract: true,
         url: '/articles',
-        template: '<ui-view/>'
+        template: '<ui-view/>',
       })
-      .state('app.admin.articles.list', {
+      .state('admin.articles.list', {
         url: '',
         templateUrl: '/modules/articles/client/views/admin/list-articles.client.view.html',
         controller: 'ArticlesAdminListController',
         controllerAs: 'vm',
         data: {
-          roles: ['admin']
-        }
+          roles: ['admin'],
+        },
       })
-      .state('app.admin.articles.create', {
+      .state('admin.articles.create', {
         url: '/create',
         templateUrl: '/modules/articles/client/views/admin/form-article.client.view.html',
         controller: 'ArticlesAdminController',
         controllerAs: 'vm',
         data: {
-          roles: ['admin']
+          roles: ['admin'],
         },
         resolve: {
-          articleResolve: newArticle
-        }
+          articleResolve: newArticle,
+        },
       })
       .state('admin.articles.edit', {
         url: '/:articleId/edit',
@@ -42,11 +40,11 @@
         controllerAs: 'vm',
         data: {
           roles: ['admin'],
-          pageTitle: '{{ articleResolve.title }}'
+          pageTitle: '{{ articleResolve.title }}',
         },
         resolve: {
-          articleResolve: getArticle
-        }
+          articleResolve: getArticle,
+        },
       });
   }
 
@@ -54,7 +52,7 @@
 
   function getArticle($stateParams, ArticlesService) {
     return ArticlesService.get({
-      articleId: $stateParams.articleId
+      articleId: $stateParams.articleId,
     }).$promise;
   }
 
@@ -63,4 +61,4 @@
   function newArticle(ArticlesService) {
     return new ArticlesService();
   }
-}());
+})());

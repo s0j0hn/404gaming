@@ -1,19 +1,16 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
     .module('core.admin')
     .run(menuConfig);
 
-  menuConfig.$inject = ['Menus'];
+  menuConfig.$inject = ['menuService'];
 
-  function menuConfig(Menus) {
-    Menus.addMenuItem('sidebar', {
+  function menuConfig(menuService) {
+    menuService.addMenuItem('topbar', {
       title: 'Admin',
       state: 'admin',
       type: 'dropdown',
-      iconClass: 'fa fa-wrench',
-      roles: ['admin']
+      roles: ['admin'],
     });
   }
-}());
+})());

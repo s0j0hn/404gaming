@@ -1,27 +1,27 @@
-﻿'use strict';
+const should = require('should');
+const request = require('supertest');
+const path = require('path');
+const mongoose = require('mongoose');
 
-var should = require('should'),
-  request = require('supertest'),
-  path = require('path'),
-  mongoose = require('mongoose'),
-  User = mongoose.model('User'),
-  Article = mongoose.model('Article'),
-  express = require(path.resolve('./config/lib/express'));
+const User = mongoose.model('User');
+const Article = mongoose.model('Article');
+const express = require(path.resolve('./config/lib/express'));
 
 /**
  * Globals
  */
-var app,
-  agent,
-  credentials,
-  user,
-  article;
+let app;
+
+let agent;
+let credentials;
+let user;
+let article;
 
 /**
  * Article routes tests
  */
-describe('Article Admin CRUD tests', function () {
-  before(function (done) {
+describe('Article Admin CRUD tests', () => {
+  before((done) => {
     // Get application
     app = express.init(mongoose.connection.db);
     agent = request.agent(app);
@@ -29,11 +29,11 @@ describe('Article Admin CRUD tests', function () {
     done();
   });
 
-  beforeEach(function (done) {
+  beforeEach((done) => {
     // Create user credentials
     credentials = {
       usernameOrEmail: 'username',
-      password: 'M3@n.jsI$Aw3$0m3'
+      password: 'M3@n.jsI$Aw3$0m3',
     };
 
     // Create a new user
@@ -45,15 +45,15 @@ describe('Article Admin CRUD tests', function () {
       roles: ['user', 'admin'],
       username: credentials.usernameOrEmail,
       password: credentials.password,
-      provider: 'local'
+      provider: 'local',
     });
 
     // Save a user to the test db and create new article
     user.save()
-      .then(function () {
+      .then(() => {
         article = {
           title: 'Article Title',
-          content: 'Article Content'
+          content: 'Article Content',
         };
 
         done();
@@ -61,24 +61,24 @@ describe('Article Admin CRUD tests', function () {
       .catch(done);
   });
 
-  it('should be able to save an article if logged in', function (done) {
+  it('should be able to save an article if logged in', (done) => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end((signinErr, signinRes) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
         }
 
         // Get the userId
-        var userId = user.id;
+        const userId = user.id;
 
         // Save a new article
         agent.post('/api/articles')
           .send(article)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end((articleSaveErr, articleSaveRes) => {
             // Handle article save error
             if (articleSaveErr) {
               return done(articleSaveErr);
@@ -86,14 +86,14 @@ describe('Article Admin CRUD tests', function () {
 
             // Get a list of articles
             agent.get('/api/articles')
-              .end(function (articlesGetErr, articlesGetRes) {
+              .end((articlesGetErr, articlesGetRes) => {
                 // Handle article save error
                 if (articlesGetErr) {
                   return done(articlesGetErr);
                 }
 
                 // Get articles list
-                var articles = articlesGetRes.body;
+                const articles = articlesGetRes.body;
 
                 // Set assertions
                 (articles[0].user._id).should.equal(userId);
@@ -106,24 +106,24 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should be able to update an article if signed in', function (done) {
+  it('should be able to update an article if signed in', (done) => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end((signinErr, signinRes) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
         }
 
         // Get the userId
-        var userId = user.id;
+        const userId = user.id;
 
         // Save a new article
         agent.post('/api/articles')
           .send(article)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end((articleSaveErr, articleSaveRes) => {
             // Handle article save error
             if (articleSaveErr) {
               return done(articleSaveErr);
@@ -133,10 +133,10 @@ describe('Article Admin CRUD tests', function () {
             article.title = 'WHY YOU GOTTA BE SO MEAN?';
 
             // Update an existing article
-            agent.put('/api/articles/' + articleSaveRes.body._id)
+            agent.put(`/api/articles/${articleSaveRes.body._id}`)
               .send(article)
               .expect(200)
-              .end(function (articleUpdateErr, articleUpdateRes) {
+              .end((articleUpdateErr, articleUpdateRes) => {
                 // Handle article update error
                 if (articleUpdateErr) {
                   return done(articleUpdateErr);
@@ -153,27 +153,27 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should not be able to save an article if no title is provided', function (done) {
+  it('should not be able to save an article if no title is provided', (done) => {
     // Invalidate title field
     article.title = '';
 
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end((signinErr, signinRes) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
         }
 
         // Get the userId
-        var userId = user.id;
+        const userId = user.id;
 
         // Save a new article
         agent.post('/api/articles')
           .send(article)
           .expect(422)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end((articleSaveErr, articleSaveRes) => {
             // Set message assertion
             (articleSaveRes.body.message).should.match('Title cannot be blank');
 
@@ -183,34 +183,34 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should be able to delete an article if signed in', function (done) {
+  it('should be able to delete an article if signed in', (done) => {
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end((signinErr, signinRes) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
         }
 
         // Get the userId
-        var userId = user.id;
+        const userId = user.id;
 
         // Save a new article
         agent.post('/api/articles')
           .send(article)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end((articleSaveErr, articleSaveRes) => {
             // Handle article save error
             if (articleSaveErr) {
               return done(articleSaveErr);
             }
 
             // Delete an existing article
-            agent.delete('/api/articles/' + articleSaveRes.body._id)
+            agent.delete(`/api/articles/${articleSaveRes.body._id}`)
               .send(article)
               .expect(200)
-              .end(function (articleDeleteErr, articleDeleteRes) {
+              .end((articleDeleteErr, articleDeleteRes) => {
                 // Handle article error error
                 if (articleDeleteErr) {
                   return done(articleDeleteErr);
@@ -226,37 +226,37 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  it('should be able to get a single article if signed in and verify the custom "isCurrentUserOwner" field is set to "true"', function (done) {
+  it('should be able to get a single article if signed in and verify the custom "isCurrentUserOwner" field is set to "true"', (done) => {
     // Create new article model instance
     article.user = user;
-    var articleObj = new Article(article);
+    const articleObj = new Article(article);
 
     agent.post('/api/auth/signin')
       .send(credentials)
       .expect(200)
-      .end(function (signinErr, signinRes) {
+      .end((signinErr, signinRes) => {
         // Handle signin error
         if (signinErr) {
           return done(signinErr);
         }
 
         // Get the userId
-        var userId = user.id;
+        const userId = user.id;
 
         // Save a new article
         agent.post('/api/articles')
           .send(article)
           .expect(200)
-          .end(function (articleSaveErr, articleSaveRes) {
+          .end((articleSaveErr, articleSaveRes) => {
             // Handle article save error
             if (articleSaveErr) {
               return done(articleSaveErr);
             }
 
             // Get the article
-            agent.get('/api/articles/' + articleSaveRes.body._id)
+            agent.get(`/api/articles/${articleSaveRes.body._id}`)
               .expect(200)
-              .end(function (articleInfoErr, articleInfoRes) {
+              .end((articleInfoErr, articleInfoRes) => {
                 // Handle article error
                 if (articleInfoErr) {
                   return done(articleInfoErr);
@@ -276,7 +276,7 @@ describe('Article Admin CRUD tests', function () {
       });
   });
 
-  afterEach(function (done) {
+  afterEach((done) => {
     Article.remove().exec()
       .then(User.remove().exec())
       .then(done())

@@ -1,15 +1,13 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.users')
+    .module('users')
     .controller('SettingsController', SettingsController);
 
   SettingsController.$inject = ['$scope', 'Authentication'];
 
   function SettingsController($scope, Authentication) {
-    var vm = this;
+    const vm = this;
 
     vm.user = Authentication.user;
   }
-}());
+})());

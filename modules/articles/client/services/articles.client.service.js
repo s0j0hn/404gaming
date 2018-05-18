@@ -1,26 +1,24 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.articles.services')
+    .module('articles.services')
     .factory('ArticlesService', ArticlesService);
 
   ArticlesService.$inject = ['$resource', '$log'];
 
   function ArticlesService($resource, $log) {
-    var Article = $resource('/api/articles/:articleId', {
-      articleId: '@_id'
+    const Article = $resource('/api/articles/:articleId', {
+      articleId: '@_id',
     }, {
       update: {
-        method: 'PUT'
-      }
+        method: 'PUT',
+      },
     });
 
     angular.extend(Article.prototype, {
-      createOrUpdate: function () {
-        var article = this;
+      createOrUpdate() {
+        const article = this;
         return createOrUpdate(article);
-      }
+      },
     });
 
     return Article;
@@ -28,9 +26,9 @@
     function createOrUpdate(article) {
       if (article._id) {
         return article.$update(onSuccess, onError);
-      } else {
-        return article.$save(onSuccess, onError);
       }
+      return article.$save(onSuccess, onError);
+
 
       // Handle successful response
       function onSuccess(article) {
@@ -39,7 +37,7 @@
 
       // Handle error response
       function onError(errorResponse) {
-        var error = errorResponse.data;
+        const error = errorResponse.data;
         // Handle error internally
         handleError(error);
       }
@@ -50,4 +48,4 @@
       $log.error(error);
     }
   }
-}());
+})());

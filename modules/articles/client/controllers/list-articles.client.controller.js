@@ -1,15 +1,13 @@
-(function () {
-  'use strict';
-
+((() => {
   angular
-    .module('app.articles')
+    .module('articles')
     .controller('ArticlesListController', ArticlesListController);
 
   ArticlesListController.$inject = ['ArticlesService'];
 
   function ArticlesListController(ArticlesService) {
-    var vm = this;
+    const vm = this;
 
     vm.articles = ArticlesService.query();
   }
-}());
+})());

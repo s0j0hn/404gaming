@@ -1,36 +1,26 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var passport = require('passport'),
-  LocalStrategy = require('passport-local').Strategy,
-  User = require('mongoose').model('User');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+// const User = require('mongoose').model('User')
+const UserService = require('../../services/user.service');
 
-module.exports = function () {
-  // Use local strategy
+module.exports = () => {
   passport.use(new LocalStrategy({
     usernameField: 'usernameOrEmail',
-    passwordField: 'password'
-  },
-  function (usernameOrEmail, password, done) {
-    User.findOne({
-      $or: [{
-        username: usernameOrEmail.toLowerCase()
-      }, {
-        email: usernameOrEmail.toLowerCase()
-      }]
-    }, function (err, user) {
-      if (err) {
-        return done(err);
+    passwordField: 'password',
+  }, async (email, password, done) => {
+    try {
+      const user = await UserService.authenticate(email, password);
+      if (user) {
+        return done(null, user);
       }
-      if (!user || !user.authenticate(password)) {
-        return done(null, false, {
-          message: 'Invalid username or password (' + (new Date()).toLocaleTimeString() + ')'
-        });
-      }
-
-      return done(null, user);
-    });
+      return done(null, false, {
+        message: 'Invalid username or password',
+      });
+    } catch (err) {
+      return done(err);
+    }
   }));
 };

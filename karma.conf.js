@@ -1,29 +1,30 @@
-'use strict';
-
+/* eslint-disable no-unused-vars */
 /**
  * Module dependencies.
  */
-var _ = require('lodash'),
-  defaultAssets = require('./config/assets/default'),
-  testAssets = require('./config/assets/test'),
-  testConfig = require('./config/env/test'),
-  karmaReporters = ['mocha'];
+const _ = require('lodash');
+
+const defaultAssets = require('./config/assets/default');
+const testAssets = require('./config/assets/test');
+const testConfig = require('./config/env/test');
+
+const karmaReporters = ['mocha'];
 
 // Karma configuration
-module.exports = function (karmaConfig) {
-  var configuration = {
+module.exports = (karmaConfig) => {
+  const configuration = {
     frameworks: ['jasmine'],
 
     preprocessors: {
-      'modules/*/client/views/**/*.html': ['ng-html2js']
+      'modules/*/client/views/**/*.html': ['ng-html2js'],
     },
 
     ngHtml2JsPreprocessor: {
       moduleName: 'mean',
 
-      cacheIdFromPath: function (filepath) {
+      cacheIdFromPath(filepath) {
         return filepath;
-      }
+      },
     },
 
     // List of files / patterns to load in the browser
@@ -58,8 +59,8 @@ module.exports = function (karmaConfig) {
     customLaunchers: {
       Chrome_travis_ci: {
         base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
+        flags: ['--no-sandbox'],
+      },
     },
 
     // If browser does not capture in given timeout [ms], kill it
@@ -67,7 +68,7 @@ module.exports = function (karmaConfig) {
 
     // Continuous Integration mode
     // If true, it capture browsers, run tests and exit
-    singleRun: true
+    singleRun: true,
   };
 
   if (process.env.TRAVIS) {

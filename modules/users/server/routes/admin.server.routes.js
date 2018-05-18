@@ -1,21 +1,17 @@
-'use strict';
-
 /**
  * Module dependencies
  */
-var adminPolicy = require('../policies/admin.server.policy'),
-  admin = require('../controllers/admin.server.controller');
+const adminPolicy = require('../policies/admin.server.policy');
 
-module.exports = function (app) {
+const admin = require('../controllers/admin.server.controller');
+
+module.exports = (app) => {
   // User route registration first. Ref: #713
   require('./users.server.routes.js')(app);
 
   // Users collection routes
   app.route('/api/users')
     .get(adminPolicy.isAllowed, admin.list);
-
-  app.route('/api/custom/users/limit/:limit/sort/:sort')
-  .get(adminPolicy.isAllowed, admin.customlist);
 
   // Single user routes
   app.route('/api/users/:userId')
