@@ -28,7 +28,9 @@
     "generate-ssl-certs": "scripts/generate-ssl-certs.sh",
     "seed": "gulp seed",
     "seed:prod": "gulp seed:prod",
-    "seed:test": "gulp seed:test"
+    "seed:test": "gulp seed:test",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "acl": "^0.4.11",
@@ -80,7 +82,7 @@
     "gulp-rev": "~8.0.0",
     "gulp-sass": "^3.1.0",
     "helmet": "^3.8.2",
-    "imagemin-pngquant": "~5.0.0",
+    "imagemin-pngquant": "~5.1.0",
     "jasmine-core": "~2.7.0",
     "jsonwebtoken": "^8.2.1",
     "lodash": "~4.17.13",
@@ -107,7 +109,8 @@
     "socket.io": "^2.0.3",
     "validator": "~8.0.0",
     "webpack": "^4.5.0",
-    "winston": "^2.4.2"
+    "winston": "^2.4.2",
+    "snyk": "^1.85.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.41",
@@ -130,5 +133,6 @@
     "supertest": "~3.0.0",
     "vinyl-named": "^1.1.0",
     "webpack-stream": "^4.0.2"
-  }
+  },
+  "snyk": true
 }
